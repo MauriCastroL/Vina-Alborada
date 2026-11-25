@@ -14,6 +14,8 @@ export function useVentaDetalle(id) {
     const [agregar, setAgregar] = useState({ CANTIDAD: 1 });
     const [pago, setPago] = useState({});
     const [motivo, setMotivo] = useState('');
+    const [confirmando, setConfirmando] = useState(false);
+    const [confirmacion, setConfirmacion] = useState(null);
 
     const venta = ventas.find((v) => String(v.ID_VENTA) === String(id));
     const total = lineas.reduce((s, l) => s + l.SUBTOTAL, 0);
@@ -34,12 +36,25 @@ export function useVentaDetalle(id) {
 
     async function agregarProducto(e) {
         e.preventDefault();
-        if (await ejecutar(() => ventasModelo.agregarProducto(id, agregar), 'Producto agregado')) setAgregar({ CANTIDAD: 1 });
+        const { ID_PRODUCTO, CANTIDAD } = agregar;
+        if (!activos.some((p) => String(p.ID_PRODUCTO) === String(ID_PRODUCTO))) return;
+        if (await ejecutar(() => ventasModelo.agregarProducto(id, { ID_PRODUCTO, CANTIDAD }), 'Producto agregado')) {
+            setAgregar({ CANTIDAD: 1, BUSCAR_PRODUCTO: agregar.BUSCAR_PRODUCTO });
+        }
     }
 
-    function confirmar(e) {
+    async function confirmar(e) {
         e.preventDefault();
-        ejecutar(() => ventasModelo.confirmar(id, pago), 'Venta confirmada: stock descontado y pago registrado');
+        if (confirmando) return;
+        setConfirmando(true);
+        try {
+            await ejecutar(async () => {
+                const resultado = await ventasModelo.confirmar(id, { ID_METODO_PAGO: pago.ID_METODO_PAGO });
+                setConfirmacion({ id, referencia: resultado?.REFERENCIA });
+            }, 'Venta confirmada: stock descontado y pago registrado');
+        } finally {
+            setConfirmando(false);
+        }
     }
 
     function anular(e) {
@@ -50,7 +65,8 @@ export function useVentaDetalle(id) {
     }
 
     return {
-        venta, cargando, lineas, total, activos, metodos,
+        venta, cargando, lineas, total, activos, metodos, confirmando,
+        referencia: confirmacion?.id === id ? confirmacion.referencia : undefined,
         agregar, setAgregar, pago, setPago, motivo, setMotivo, agregarProducto, confirmar, anular
     };
 }

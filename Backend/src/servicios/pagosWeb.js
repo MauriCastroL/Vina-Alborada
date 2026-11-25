@@ -4,7 +4,6 @@ const { mkdir, readFile, rename, unlink, writeFile } = require('node:fs/promises
 const { join, resolve } = require('node:path');
 const pedidos = require('../modelos/pedidoModelo');
 const solicitudes = require('../modelos/solicitudModelo');
-const ventas = require('../modelos/ventaModelo');
 const { errorApp } = require('../utilidades/errores');
 
 const directorio = resolve(process.env.PAGOS_WEB_DIR || join(__dirname, '..', '..', '.pagos-web'));
@@ -121,40 +120,17 @@ async function enviar(id, { idMetodoPago, idProducto, cantidad }, usuario) {
     }));
 }
 
-async function registrar(solicitud, idVenta, pago, usuario) {
-    try {
-        await ventas.confirmar(idVenta, pago.ID_METODO_PAGO, pago.ID_TRANSACCION, usuario);
-    } catch (error) {
-        // Si se perdió la respuesta tras confirmar, el estado existente permite reconocer el pago.
-        const actual = await buscar(solicitud.ID_SOLICITUD, null, usuario);
-        if (!['CONFIRMADA', 'ANULADA'].includes(actual.ESTADO_VENTA)) throw error;
-    }
-    return { ID_VENTA: idVenta, ID_TRANSACCION: pago.ID_TRANSACCION };
-}
-
-async function resolver(id, decision, usuario) {
+async function anular(id, usuario) {
     return serializar(id, async () => {
-        if (decision !== 'ACEPTADA') {
-            return { ID_VENTA: await solicitudes.resolver(id, decision, usuario) };
-        }
-
         const solicitud = await buscar(id, null, usuario);
-        const pago = await leer(solicitud);
-        if (!pago) throw errorApp(20314, 'EL CLIENTE DEBE SELECCIONAR EL METODO DE PAGO');
-
-        if (solicitud.ESTADO === 'ACEPTADA' && ['CONFIRMADA', 'ANULADA'].includes(solicitud.ESTADO_VENTA)) {
-            return { ID_VENTA: solicitud.ID_VENTA, ID_TRANSACCION: pago.ID_TRANSACCION };
+        if (solicitud.ESTADO === 'BORRADOR') {
+            await pedidos.anular(id, usuario);
+        } else if (solicitud.ESTADO === 'PENDIENTE') {
+            // El procedimiento existente cierra una solicitud pendiente como RECHAZADA.
+            await solicitudes.resolver(id, 'RECHAZADA', usuario);
+        } else {
+            throw errorApp(20311, 'Solo se pueden anular solicitudes en borrador o pendientes.');
         }
-
-        const metodos = await pedidos.listarMetodosPago(usuario);
-        if (!metodos.some((metodo) => Number(metodo.ID_METODO_PAGO) === pago.ID_METODO_PAGO)) {
-            throw errorApp(20314, 'EL CLIENTE DEBE ELEGIR OTRO METODO DE PAGO ACTIVO');
-        }
-
-        const idVenta = solicitud.ESTADO === 'ACEPTADA' && solicitud.ESTADO_VENTA === 'BORRADOR'
-            ? solicitud.ID_VENTA
-            : await solicitudes.resolver(id, decision, usuario);
-        return registrar(solicitud, idVenta, pago, usuario);
     });
 }
 
@@ -181,4 +157,4 @@ async function mostrarVentas(filas, usuario) {
     }));
 }
 
-module.exports = { enviar, resolver, mostrar, mostrarVentas, serializar };
+module.exports = { enviar, anular, mostrar, mostrarVentas, serializar };

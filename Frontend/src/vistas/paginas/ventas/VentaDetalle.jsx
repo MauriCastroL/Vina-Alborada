@@ -8,6 +8,7 @@ import Formulario from '../../componentes/Formulario.jsx';
 import Insignia from '../../componentes/Insignia.jsx';
 import Tabla from '../../componentes/Tabla.jsx';
 import { Dato, PanelAccion, Volver } from './partes.jsx';
+import BuscadorProducto from './BuscadorProducto.jsx';
 
 export default function VentaDetalle() {
     const { id } = useParams();
@@ -23,6 +24,8 @@ export default function VentaDetalle() {
             </section>
         );
     }
+
+    const seleccionado = v.activos.find((producto) => String(producto.ID_PRODUCTO) === String(v.agregar.ID_PRODUCTO));
 
     return (
         <section>
@@ -43,6 +46,9 @@ export default function VentaDetalle() {
                 <Dato etiqueta="Método de pago">{venta.METODO_PAGO || '—'}</Dato>
                 {venta.ID_TRANSACCION && (
                     <Dato etiqueta="ID de transacción" ancho><span className="break-all">{venta.ID_TRANSACCION}</span></Dato>
+                )}
+                {v.referencia && (
+                    <Dato etiqueta="Referencia de pago" ancho><span className="break-all">{v.referencia}</span></Dato>
                 )}
                 <Dato etiqueta="Vendedor">{venta.VENDEDOR?.toLowerCase()}</Dato>
                 {venta.ESTADO === 'ANULADA' && (
@@ -66,13 +72,18 @@ export default function VentaDetalle() {
                 {venta.ESTADO === 'BORRADOR' && venta.CANAL_VENTA === 'PRESENCIAL' && (
                     <PanelAccion titulo="Agregar producto" ayuda="Se usa el precio vigente y se valida el stock disponible."
                         onSubmit={v.agregarProducto}>
+                        <BuscadorProducto productos={v.activos} consulta={v.agregar.BUSCAR_PRODUCTO ?? ''}
+                            seleccionado={seleccionado}
+                            alBuscar={(BUSCAR_PRODUCTO) => v.setAgregar((anterior) => ({
+                                ...anterior, BUSCAR_PRODUCTO, ID_PRODUCTO: undefined
+                            }))}
+                            alSeleccionar={(producto) => v.setAgregar((anterior) => ({
+                                ...anterior, ID_PRODUCTO: producto.ID_PRODUCTO
+                            }))} />
                         <Formulario valores={v.agregar} alCambiar={v.setAgregar} campos={[
-                            { nombre: 'ID_PRODUCTO', etiqueta: 'Producto', tipo: 'select', requerido: true, ancho: 'completo',
-                                opciones: v.activos.map((p) => ({ valor: p.ID_PRODUCTO,
-                                    texto: `${p.NOMBRE} · ${dinero(p.PRECIO_ACTUAL)} · stock ${p.STOCK_ACTUAL}` })) },
                             { nombre: 'CANTIDAD', etiqueta: 'Cantidad', tipo: 'number', requerido: true, min: 1 }
                         ]} />
-                        <button type="submit" className="btn self-start">Agregar</button>
+                        <button type="submit" className="btn self-start" disabled={!seleccionado}>Agregar</button>
                     </PanelAccion>
                 )}
 
@@ -82,17 +93,16 @@ export default function VentaDetalle() {
                         onSubmit={v.confirmar}>
                         <Formulario valores={v.pago} alCambiar={v.setPago} campos={[
                             { nombre: 'ID_METODO_PAGO', etiqueta: 'Método de pago', tipo: 'select', requerido: true,
-                                opciones: v.metodos.map((m) => ({ valor: m.ID_METODO_PAGO, texto: m.NOMBRE })) },
-                            { nombre: 'REFERENCIA', etiqueta: 'Referencia externa (opcional)', placeholder: 'N° de transferencia' }
+                                opciones: v.metodos.map((m) => ({ valor: m.ID_METODO_PAGO, texto: m.NOMBRE })) }
                         ]} />
-                        <button type="submit" className="btn self-start" disabled={v.lineas.length === 0}>
-                            Confirmar venta
+                        <button type="submit" className="btn self-start" disabled={v.confirmando || v.lineas.length === 0}>
+                            {v.confirmando ? 'Confirmando…' : 'Confirmar venta'}
                         </button>
                     </PanelAccion>
                 )}
 
                 {venta.ESTADO === 'BORRADOR' && venta.CANAL_VENTA === 'DIGITAL' && (
-                    <Link to="/solicitudes" className="btn btn-sec justify-self-start">Revisar solicitud para registrar el pago</Link>
+                    <Link to="/solicitudes" className="btn btn-sec justify-self-start">Consultar solicitudes web</Link>
                 )}
 
                 {venta.ESTADO === 'CONFIRMADA' && (

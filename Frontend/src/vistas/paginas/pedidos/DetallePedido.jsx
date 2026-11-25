@@ -7,9 +7,9 @@ import Tabla from '../../componentes/Tabla.jsx';
 
 const EXPLICACION = {
     BORRADOR: 'Elige un método de pago y envía cada producto cuando esté listo.',
-    PENDIENTE: 'Enviado: la viña lo está revisando.',
+    PENDIENTE: 'Enviado a la viña.',
     ACEPTADA: 'Aceptado por la viña: tu compra fue registrada.',
-    RECHAZADA: 'La viña no pudo aceptar este pedido (por ejemplo, por falta de stock).'
+    RECHAZADA: 'La viña cerró esta solicitud.'
 };
 
 function SelectorPago({ id, etiqueta, metodos, valor, alCambiar, deshabilitado }) {
