@@ -1,5 +1,5 @@
 // Pagina: detalle de una venta (productos, agregar, confirmar con pago y anular)
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useVentaDetalle } from '../../../controladores/useVentaDetalle.js';
 import { dinero, fechaHora } from '../../../utilidades/formato.js';
 import Cabecera from '../../componentes/Cabecera.jsx';
@@ -40,7 +40,10 @@ export default function VentaDetalle() {
             <div className="mb-6 grid grid-cols-2 gap-4 rounded-lg border border-borde bg-white p-5 md:grid-cols-4">
                 <Dato etiqueta="Creada">{fechaHora(venta.FECHA_CREACION)}</Dato>
                 <Dato etiqueta="Confirmada">{fechaHora(venta.FECHA_CONFIRMACION) || '—'}</Dato>
-                <Dato etiqueta="Pago">{venta.METODO_PAGO || '—'}</Dato>
+                <Dato etiqueta="Método de pago">{venta.METODO_PAGO || '—'}</Dato>
+                {venta.ID_TRANSACCION && (
+                    <Dato etiqueta="ID de transacción" ancho><span className="break-all">{venta.ID_TRANSACCION}</span></Dato>
+                )}
                 <Dato etiqueta="Vendedor">{venta.VENDEDOR?.toLowerCase()}</Dato>
                 {venta.ESTADO === 'ANULADA' && (
                     <Dato etiqueta="Anulada" ancho>{fechaHora(venta.FECHA_ANULACION)} · {venta.MOTIVO_ANULACION}</Dato>
@@ -73,17 +76,23 @@ export default function VentaDetalle() {
                     </PanelAccion>
                 )}
 
-                {venta.ESTADO === 'BORRADOR' && (
+                {venta.ESTADO === 'BORRADOR' && venta.CANAL_VENTA === 'PRESENCIAL' && (
                     <PanelAccion titulo="Confirmar venta y registrar pago"
                         ayuda={`Descuenta el stock y registra el pago por el total (${dinero(v.total)}).`}
                         onSubmit={v.confirmar}>
                         <Formulario valores={v.pago} alCambiar={v.setPago} campos={[
                             { nombre: 'ID_METODO_PAGO', etiqueta: 'Método de pago', tipo: 'select', requerido: true,
                                 opciones: v.metodos.map((m) => ({ valor: m.ID_METODO_PAGO, texto: m.NOMBRE })) },
-                            { nombre: 'REFERENCIA', etiqueta: 'Referencia (opcional)', placeholder: 'N° de transferencia' }
+                            { nombre: 'REFERENCIA', etiqueta: 'Referencia externa (opcional)', placeholder: 'N° de transferencia' }
                         ]} />
-                        <button type="submit" className="btn self-start" disabled={v.lineas.length === 0}>Confirmar venta</button>
+                        <button type="submit" className="btn self-start" disabled={v.lineas.length === 0}>
+                            Confirmar venta
+                        </button>
                     </PanelAccion>
+                )}
+
+                {venta.ESTADO === 'BORRADOR' && venta.CANAL_VENTA === 'DIGITAL' && (
+                    <Link to="/solicitudes" className="btn btn-sec justify-self-start">Revisar solicitud para registrar el pago</Link>
                 )}
 
                 {venta.ESTADO === 'CONFIRMADA' && (

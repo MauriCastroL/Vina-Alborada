@@ -13,12 +13,18 @@ function Contenido({ solicitud, alCerrar, alCambiar }) {
     const { datos: productos } = useDatos(RUTA_PRODUCTOS);
     const [total, setTotal] = useState(0);
     const gestor = useGestorSolicitud(solicitud, { alCambiar, alCerrar });
+    const revisar = solicitud.ESTADO === 'PENDIENTE';
+    const pagoPendiente = solicitud.ESTADO === 'ACEPTADA' && solicitud.ESTADO_VENTA === 'BORRADOR';
     const editable = solicitud.ESTADO === 'BORRADOR';
 
     return (
         <Modal titulo={`Solicitud folio ${solicitud.NUMERO_FOLIO}`} abierto alCerrar={alCerrar} ancho="grande">
             <p className="mb-3 text-sm text-suave">
                 {solicitud.CLIENTE} · <Insignia valor={solicitud.ESTADO} /> · Total {dinero(total)}
+                {solicitud.METODO_PAGO && <><br />Método de pago: {solicitud.METODO_PAGO}</>}
+                {(revisar || pagoPendiente) && !solicitud.ID_METODO_PAGO && (
+                    <><br />El cliente debe seleccionar el método de pago.</>
+                )}
                 {solicitud.OBSERVACIONES && <><br />Observaciones: {solicitud.OBSERVACIONES}</>}
             </p>
             <CrudPagina
@@ -42,20 +48,16 @@ function Contenido({ solicitud, alCerrar, alCambiar }) {
                 ]}
             />
             <div className="mt-5 flex flex-wrap justify-end gap-2">
-                {solicitud.ESTADO === 'BORRADOR' && (
-                    <button type="button" className="btn" onClick={gestor.enviar}>
-                        Enviar solicitud
+                {revisar && (
+                    <button type="button" className="btn btn-peligro" onClick={gestor.rechazar} disabled={gestor.procesando}>
+                        Rechazar
                     </button>
                 )}
-                {solicitud.ESTADO === 'PENDIENTE' && (
-                    <>
-                        <button type="button" className="btn btn-peligro" onClick={gestor.rechazar}>
-                            Rechazar
-                        </button>
-                        <button type="button" className="btn" onClick={gestor.aceptar}>
-                            Aceptar (genera venta)
-                        </button>
-                    </>
+                {(revisar || pagoPendiente) && (
+                    <button type="button" className="btn" onClick={gestor.aceptar}
+                        disabled={!solicitud.ID_METODO_PAGO || gestor.procesando}>
+                        {pagoPendiente ? 'Reintentar registro del pago' : 'Aceptar y registrar pago'}
+                    </button>
                 )}
                 {solicitud.ID_VENTA && (
                     <Link className="btn btn-sec" to={`/ventas/${solicitud.ID_VENTA}`}>

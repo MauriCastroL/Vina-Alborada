@@ -16,6 +16,7 @@ router.use(autenticar);
 const misSolicitudes = express.Router();
 misSolicitudes.use(permiso('MIS_SOLICITUDES'));
 misSolicitudes.get('/', pedidos.listar);
+misSolicitudes.get('/metodos-pago', pedidos.listarMetodosPago);
 misSolicitudes.post('/', pedidos.crear);
 misSolicitudes.put('/:id', pedidoPropio, pedidos.modificar);
 misSolicitudes.delete('/:id', pedidoPropio, pedidos.anular);

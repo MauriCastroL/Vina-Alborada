@@ -1,6 +1,11 @@
 // Controlador generico de los 10 mantenedores: listar, crear, modificar, eliminar (logico) y reactivar
 const mantenedorModelo = require('../modelos/mantenedorModelo');
 const servicio = require('../servicios/mantenedorServicio');
+const crearProducto = require('../servicios/creacionProducto');
+const validarFormatoProducto = require('../servicios/formatoProducto');
+const productos = require('../modelos/mantenedores/productos');
+const pagosWeb = require('../servicios/pagosWeb');
+const solicitudes = require('../modelos/mantenedores/solicitudes');
 const asincrono = require('../utilidades/asincrono');
 
 const listar = asincrono(async (req, res) => {
@@ -8,16 +13,26 @@ const listar = asincrono(async (req, res) => {
     if (faltante) {
         return res.status(400).json({ error: `FALTA EL FILTRO ${faltante}` });
     }
-    res.json(await mantenedorModelo.listar(req.recurso, params, req.usuario));
+    const filas = await mantenedorModelo.listar(req.recurso, params, req.usuario);
+    res.json(req.recurso === solicitudes ? await Promise.all(filas.map(pagosWeb.mostrar)) : filas);
 });
 
 const crear = asincrono(async (req, res) => {
-    await mantenedorModelo.crear(req.recurso, servicio.parametrosCrear(req.recurso, req.body || {}, req.usuario), req.usuario);
+    const recibido = req.body || {};
+    const cuerpo = req.recurso === productos ? await validarFormatoProducto(recibido, req.usuario) : recibido;
+    if (req.recurso === productos && (Object.hasOwn(cuerpo, 'CEPAS') || Number(cuerpo.ACTIVO) === 1)) {
+        return res.status(201).json(await crearProducto(cuerpo, req.usuario));
+    }
+    await mantenedorModelo.crear(req.recurso, servicio.parametrosCrear(req.recurso, cuerpo, req.usuario), req.usuario);
     res.status(201).json({ ok: true });
 });
 
 const modificar = asincrono(async (req, res) => {
-    const params = servicio.parametrosModificar(req.recurso, req.params.id, req.params.id2, req.body || {});
+    const recibido = req.body || {};
+    const cuerpo = req.recurso === productos
+        ? await validarFormatoProducto(recibido, req.usuario, req.params.id)
+        : recibido;
+    const params = servicio.parametrosModificar(req.recurso, req.params.id, req.params.id2, cuerpo);
     await mantenedorModelo.modificar(req.recurso, params, req.usuario);
     res.json({ ok: true });
 });

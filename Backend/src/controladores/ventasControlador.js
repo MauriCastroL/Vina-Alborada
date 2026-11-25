@@ -1,9 +1,12 @@
 // Controlador de ventas: listado, detalle, venta presencial (G2), confirmar con pago (G4) y anular (G5)
 const ventaModelo = require('../modelos/ventaModelo');
+const pagosWeb = require('../servicios/pagosWeb');
+const { errorApp } = require('../utilidades/errores');
 const asincrono = require('../utilidades/asincrono');
 
 const listar = asincrono(async (req, res) => {
-    res.json(await ventaModelo.listar(req.query.estado, req.usuario));
+    const filas = await ventaModelo.listar(req.query.estado, req.usuario);
+    res.json(await pagosWeb.mostrarVentas(filas, req.usuario));
 });
 
 const detalle = asincrono(async (req, res) => {
@@ -23,6 +26,12 @@ const agregarProducto = asincrono(async (req, res) => {
 
 const confirmar = asincrono(async (req, res) => {
     const c = req.body || {};
+    const ventas = await ventaModelo.listar(null, req.usuario);
+    const venta = ventas.find((fila) => String(fila.ID_VENTA) === String(req.params.id));
+    if (!venta) throw errorApp(20100, 'VENTA NO ENCONTRADA');
+    if (venta.CANAL_VENTA === 'DIGITAL') {
+        throw errorApp(20314, 'REGISTRE EL PAGO DIGITAL DESDE LA SOLICITUD DEL CLIENTE');
+    }
     await ventaModelo.confirmar(req.params.id, c.ID_METODO_PAGO, c.REFERENCIA, req.usuario);
     res.json({ ok: true });
 });

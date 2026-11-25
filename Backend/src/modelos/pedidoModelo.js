@@ -12,6 +12,9 @@ async function esDelCliente(idSolicitud, idCliente, usuario) {
 const listar = (idCliente, usuario) =>
     db.listar('CEMJ_PA_SOLICITUD_LISTAR', { P_ID_CLIENTE: idCliente }, usuario);
 
+const listarMetodosPago = (usuario) =>
+    db.listar('CEMJ_PA_METODO_PAGO_LISTAR', { P_SOLO_ACTIVOS: 1 }, usuario);
+
 const crear = (idCliente, observaciones, usuario) =>
     db.ejecutar('CEMJ_PA_SOLICITUD_CREAR', { P_ID_CLIENTE: idCliente, P_OBSERVACIONES: observaciones }, usuario);
 
@@ -45,5 +48,5 @@ const quitarProducto = (idSolicitud, idProducto, usuario) => db.ejecutar('CEMJ_P
 }, usuario);
 
 module.exports = {
-    esDelCliente, listar, crear, modificar, anular, listarProductos, agregarProducto, cambiarCantidad, quitarProducto
+    esDelCliente, listar, listarMetodosPago, crear, modificar, anular, listarProductos, agregarProducto, cambiarCantidad, quitarProducto
 };
