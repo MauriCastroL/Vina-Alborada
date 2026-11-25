@@ -60,7 +60,7 @@ El catálogo público se construye con `CEMJ_PA_CATALOGO_LISTAR` y el ranking de
 Las funciones `CEMJ_FN_PK_*` calculan el siguiente ID con el máximo existente más uno. Los triggers de ID son compuestos. Calculan el siguiente valor antes de la sentencia y lo asignan por fila cuando el ID viene nulo, incrementando el contador para inserciones múltiples. Distintos procedimientos bloquean la tabla para coordinar la asignación. Los folios son independientes de esas PK y se generan con `NEXTVAL`. Los triggers MAYUS normalizan los campos de identificación y texto indicados por cada entidad con mayúsculas y recorte. Rol, cliente, usuario, categoría, cepa, producto y método de pago validan el indicador ACTIVO como 0 o 1.
 
 == Integridad de las operaciones
-- Cliente valida campos mutuamente excluyentes de persona y empresa. Categoría admite `BOTELLA` o `KG`. Producto exige precio positivo y añada opcional entre 1900 y 2100 en Oracle. El formulario web aplica además el año en curso como máximo.
+- Cliente valida campos mutuamente excluyentes de persona y empresa. Categoría admite `BOTELLA` o `KG`. Producto exige precio positivo y añada opcional entre 1900 y el año de `SYSDATE`, inclusive. Los triggers `CEMJ_TRIGGER_PRODUCTO_INSERT` y `CEMJ_TRIGGER_PRODUCTO_UPDATE` validan el rango al insertar y actualizar, respectivamente. Si el valor queda fuera del rango, Oracle devuelve `ORA-20207`. En 2026 admite 2026 y rechaza 2027. El formulario web calcula su máximo con el año en curso en `America/Santiago`.
 - Inventario impide stock actual o mínimo negativos. Los detalles exigen cantidad y precio unitario positivos. Pago exige monto positivo.
 - Solicitud distingue `BORRADOR`, `PENDIENTE`, `ACEPTADA`, `RECHAZADA` y `ANULADA`. Valida envío, cierre, usuario de cierre y orden cronológico según el estado. El cambio a anulada está reservado al borrador.
 - Venta deriva `DIGITAL` si tiene solicitud y `PRESENCIAL` en caso contrario. La presencial requiere lugar y admite cliente registrado o nombre libre. La digital obtiene los datos del comprador desde la solicitud. Los estados `BORRADOR`, `CONFIRMADA` y `ANULADA` exigen campos de confirmación y anulación coherentes.
@@ -72,7 +72,26 @@ Las funciones `CEMJ_FN_PK_*` calculan el siguiente ID con el máximo existente m
 React llama a Express. El backend consulta `CEMJ_PA_LOGIN_DATOS`, compara el hash scrypt y registra el resultado con `CEMJ_PA_LOGIN_RESULTADO`. La auditoría de login es una transacción autónoma. Oracle bloquea si acumula cinco fallos de credenciales en los últimos 15 minutos posteriores al último éxito, si existe. Express entrega un JWT y vuelve a consultar permisos Oracle al acceder a módulos. El backend asigna el identificador de sesión Oracle para atribuir cambios al usuario de aplicación. El cliente se registra con `CEMJ_PA_REGISTRAR_CLIENTE`, que comprueba duplicados y crea la ficha y el usuario asociado con rol CLIENTE en la misma transacción. El cambio de contraseña valida la anterior en la aplicación y persiste el nuevo hash.
 
 == Publicación y stock inicial
-Categoría y cepas activas → producto inactivo más inventario → composición → activación → catálogo. El backend de «Guardar y activar» valida la composición, crea el producto inactivo, busca su ID por código, guarda las cepas y activa. Los procedimientos hacen commits por paso. Si falla la configuración posterior al alta, la API puede devolver un aviso con el producto ya creado. Se completa desde el mantenedor antes de activar. El stock se carga aplicando un movimiento manual.
++ *Maestros.* El alta parte de una categoría y cepas activas. La categoría define si el inventario se mide en botellas o kilos. El formato de venta, por ejemplo 750 ml, describe la presentación.
++ *Ficha e inventario.* «Guardar y activar» valida la composición en el backend y crea la ficha inactiva mediante `CEMJ_PA_PRODUCTO_CREAR`. Este procedimiento crea también la fila de inventario con stock actual cero y el mínimo informado.
++ *Composición y publicación.* El backend recupera el ID por código, guarda las relaciones de cepas con `CEMJ_PA_PROD_CEPA_CREAR` y activa mediante `CEMJ_PA_PRODUCTO_MODIFICAR`. La activación exige cepas activas con porcentajes que sumen 100%. Cada llamada de escritura confirma sus cambios. Si falla un paso posterior al alta, la ficha puede quedar inactiva con una composición parcial. Buscar por código y corregir las filas faltantes antes de activar.
++ *Disponibilidad.* La entrada manual primero queda en borrador. Al aplicar G1 se actualizan inventario y movimiento en la misma transacción. Con 36 botellas de entrada y un mínimo de 12, el resultado esperado es stock actual 36, mínimo 12 y un movimiento aplicado por 36. El catálogo presenta las fichas activas y usa el stock actual para mostrar disponibilidad.
+
+Para seguir el recorrido en la interfaz, consulta la sección «Cargar un producto y dejarlo disponible en la tienda» del manual de usuario. Estas consultas de solo lectura permiten comprobar el resultado. Sustituye el código si usaste otro.
+
+```sql
+SELECT p.codigo, p.anada, p.activo, i.stock_actual, i.stock_minimo,
+       (SELECT SUM(pc.porcentaje) FROM cemj_producto_cepa pc
+        WHERE pc.id_producto = p.id_producto) AS total_cepas
+FROM cemj_producto p JOIN cemj_inventario i ON i.id_producto = p.id_producto
+WHERE p.codigo = 'VT-ENS-DEMO-2026';
+
+SELECT m.numero_folio, m.tipo_movimiento, m.cantidad, m.estado
+FROM cemj_movimiento_inventario m
+JOIN cemj_producto p ON p.id_producto = m.id_producto
+WHERE p.codigo = 'VT-ENS-DEMO-2026'
+ORDER BY m.numero_folio DESC;
+```
 
 == G1 · Inventario
 Crear entrada o ajuste → `BORRADOR` → `CEMJ_PA_GES_MOV_APLICAR` → `APLICADO`. El gestor valida personal activo, bloquea las filas de movimiento y stock, suma entrada o ajuste positivo, y resta ajuste negativo si el saldo alcanza. Actualiza fecha de aplicación y confirma ambos cambios juntos. Anular un borrador conserva el registro y deja el stock igual.
