@@ -28,9 +28,14 @@ function Contenido({ solicitud, alCerrar, alCambiar }) {
                 ]}
             />
             <div className="mt-5 flex flex-wrap justify-end gap-2">
+                {solicitud.ESTADO === 'PENDIENTE' && (
+                    <button type="button" className="btn btn-exito" onClick={gestor.aceptar} disabled={Boolean(gestor.accionEnCurso)}>
+                        {gestor.accionEnCurso === 'aceptar' ? 'Aceptando…' : 'Aceptar solicitud'}
+                    </button>
+                )}
                 {anulable && (
-                    <button type="button" className="btn btn-peligro" onClick={gestor.anular} disabled={gestor.procesando}>
-                        {gestor.procesando ? 'Anulando…' : 'Anular solicitud'}
+                    <button type="button" className="btn btn-peligro" onClick={gestor.anular} disabled={Boolean(gestor.accionEnCurso)}>
+                        {gestor.accionEnCurso === 'anular' ? 'Anulando…' : 'Anular solicitud'}
                     </button>
                 )}
                 {solicitud.ID_VENTA && (

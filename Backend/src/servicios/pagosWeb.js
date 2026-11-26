@@ -120,6 +120,10 @@ async function enviar(id, { idMetodoPago, idProducto, cantidad }, usuario) {
     }));
 }
 
+function aceptar(id, usuario) {
+    return serializar(id, () => solicitudes.resolver(id, 'ACEPTADA', usuario));
+}
+
 async function anular(id, usuario) {
     return serializar(id, async () => {
         const solicitud = await buscar(id, null, usuario);
@@ -157,4 +161,4 @@ async function mostrarVentas(filas, usuario) {
     }));
 }
 
-module.exports = { enviar, anular, mostrar, mostrarVentas, serializar };
+module.exports = { enviar, aceptar, anular, mostrar, mostrarVentas, serializar };

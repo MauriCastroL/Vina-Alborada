@@ -13,7 +13,7 @@ export default function Solicitudes() {
         <>
             <CrudPagina
                 titulo="Solicitudes web"
-                descripcion="Consulta las solicitudes de los clientes o anula una solicitud abierta."
+                descripcion="Consulta las solicitudes de los clientes, acepta las pendientes o anula una solicitud abierta."
                 recurso="solicitudes" ids={['ID_SOLICITUD']} ordenDescendente recargar={recargar} soloLectura
                 columnas={[
                     { campo: 'NUMERO_FOLIO', titulo: 'Folio' },

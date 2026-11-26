@@ -4,23 +4,30 @@ import { useMensajes } from './MensajesContexto.jsx';
 
 export function useGestorSolicitud(solicitud, { alCambiar, alCerrar }) {
     const { avisar } = useMensajes();
-    const [procesando, setProcesando] = useState(false);
+    const [accionEnCurso, setAccionEnCurso] = useState(null);
 
-    async function anular() {
-        if (!window.confirm(`¿Anular la solicitud folio ${solicitud.NUMERO_FOLIO}?`)) return;
-
-        setProcesando(true);
+    async function ejecutar(accion, mensaje) {
+        setAccionEnCurso(accion);
         try {
-            await solicitudesModelo.anular(solicitud.ID_SOLICITUD);
-            avisar('Solicitud anulada');
+            await solicitudesModelo[accion](solicitud.ID_SOLICITUD);
+            avisar(mensaje);
             alCambiar();
             alCerrar();
         } catch (error) {
             avisar(error.message, 'error');
         } finally {
-            setProcesando(false);
+            setAccionEnCurso(null);
         }
     }
 
-    return { procesando, anular };
+    function aceptar() {
+        return ejecutar('aceptar', 'Solicitud aceptada');
+    }
+
+    function anular() {
+        if (!window.confirm(`¿Anular la solicitud folio ${solicitud.NUMERO_FOLIO}?`)) return;
+        return ejecutar('anular', 'Solicitud anulada');
+    }
+
+    return { accionEnCurso, aceptar, anular };
 }
