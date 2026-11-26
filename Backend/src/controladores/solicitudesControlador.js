@@ -7,7 +7,7 @@ const aceptar = asincrono(async (req, res) => {
 });
 
 const anular = asincrono(async (req, res) => {
-    await pagosWeb.anular(req.params.id, req.usuario);
+    await pagosWeb.anular(req.params.id, req.usuario, req.body?.MOTIVO);
     res.json({ ok: true });
 });
 

@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useGestorSolicitud } from '../../../controladores/useGestorSolicitud.js';
 import { dinero } from '../../../utilidades/formato.js';
@@ -7,7 +8,10 @@ import Modal from '../../componentes/Modal.jsx';
 
 function Contenido({ solicitud, alCerrar, alCambiar }) {
     const gestor = useGestorSolicitud(solicitud, { alCambiar, alCerrar });
-    const anulable = ['BORRADOR', 'PENDIENTE'].includes(solicitud.ESTADO);
+    const [rechazando, setRechazando] = useState(false);
+    const [motivo, setMotivo] = useState('');
+    const pendiente = solicitud.ESTADO === 'PENDIENTE';
+    const ocupado = Boolean(gestor.accionEnCurso);
 
     return (
         <Modal titulo={`Solicitud folio ${solicitud.NUMERO_FOLIO}`} abierto alCerrar={alCerrar} ancho="grande">
@@ -16,6 +20,7 @@ function Contenido({ solicitud, alCerrar, alCambiar }) {
                 {solicitud.METODO_PAGO && <><br />Método de pago: {solicitud.METODO_PAGO}</>}
                 {solicitud.ID_TRANSACCION && <><br />ID de transacción: {solicitud.ID_TRANSACCION}</>}
                 {solicitud.OBSERVACIONES && <><br />Observaciones: {solicitud.OBSERVACIONES}</>}
+                {solicitud.MOTIVO_RECHAZO && <><br />Motivo de rechazo: {solicitud.MOTIVO_RECHAZO}</>}
             </p>
             <CrudPagina
                 embebido recurso="detalle-solicitud" ids={['ID_PRODUCTO']} soloLectura
@@ -27,14 +32,38 @@ function Contenido({ solicitud, alCerrar, alCambiar }) {
                     { campo: 'SUBTOTAL', titulo: 'Subtotal', alinear: 'derecha', render: (f) => dinero(f.SUBTOTAL) }
                 ]}
             />
-            <div className="mt-5 flex flex-wrap justify-end gap-2">
-                {solicitud.ESTADO === 'PENDIENTE' && (
-                    <button type="button" className="btn btn-exito" onClick={gestor.aceptar} disabled={Boolean(gestor.accionEnCurso)}>
+            {rechazando ? (
+                <form className="mt-5" onSubmit={(e) => {
+                    e.preventDefault();
+                    if (motivo.trim() && !ocupado) gestor.rechazar(motivo.trim());
+                }}>
+                    <div className="flex flex-col gap-1">
+                        <label htmlFor="motivo-rechazo" className="text-sm font-semibold">Motivo de rechazo (obligatorio)</label>
+                        <textarea id="motivo-rechazo" rows={3} required maxLength={500} disabled={ocupado}
+                            value={motivo} onChange={(e) => setMotivo(e.target.value)} />
+                    </div>
+                    <div className="mt-3 flex flex-wrap justify-end gap-2">
+                        <button type="button" className="btn btn-sec" disabled={ocupado} onClick={() => setRechazando(false)}>
+                            Cancelar
+                        </button>
+                        <button type="submit" className="btn btn-peligro" disabled={ocupado || !motivo.trim()}>
+                            {ocupado ? 'Rechazando…' : 'Confirmar rechazo'}
+                        </button>
+                    </div>
+                </form>
+            ) : <div className="mt-5 flex flex-wrap justify-end gap-2">
+                {pendiente && (
+                    <button type="button" className="btn btn-exito" onClick={gestor.aceptar} disabled={ocupado}>
                         {gestor.accionEnCurso === 'aceptar' ? 'Aceptando…' : 'Aceptar solicitud'}
                     </button>
                 )}
-                {anulable && (
-                    <button type="button" className="btn btn-peligro" onClick={gestor.anular} disabled={Boolean(gestor.accionEnCurso)}>
+                {pendiente && (
+                    <button type="button" className="btn btn-peligro" onClick={() => setRechazando(true)} disabled={ocupado}>
+                        Rechazar solicitud
+                    </button>
+                )}
+                {solicitud.ESTADO === 'BORRADOR' && (
+                    <button type="button" className="btn btn-peligro" onClick={gestor.anular} disabled={ocupado}>
                         {gestor.accionEnCurso === 'anular' ? 'Anulando…' : 'Anular solicitud'}
                     </button>
                 )}
@@ -43,7 +72,7 @@ function Contenido({ solicitud, alCerrar, alCambiar }) {
                         Ver venta N° {solicitud.ID_VENTA}
                     </Link>
                 )}
-            </div>
+            </div>}
         </Modal>
     );
 }

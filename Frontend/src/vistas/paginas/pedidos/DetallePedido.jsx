@@ -43,6 +43,7 @@ export default function DetallePedido({ pedido, alCambiar }) {
                             ? 'Aceptado por la viña. El registro del pago está pendiente.'
                             : EXPLICACION[pedido.ESTADO]}
                     </p>
+                    {pedido.MOTIVO_RECHAZO && <p className="text-sm">Motivo de rechazo: {pedido.MOTIVO_RECHAZO}</p>}
                     {pedido.METODO_PAGO && <p className="text-sm">Método de pago: {pedido.METODO_PAGO}</p>}
                     {pedido.ID_TRANSACCION && <p className="break-all text-sm">ID de transacción: {pedido.ID_TRANSACCION}</p>}
                 </div>

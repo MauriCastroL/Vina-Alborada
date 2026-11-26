@@ -6,10 +6,10 @@ export function useGestorSolicitud(solicitud, { alCambiar, alCerrar }) {
     const { avisar } = useMensajes();
     const [accionEnCurso, setAccionEnCurso] = useState(null);
 
-    async function ejecutar(accion, mensaje) {
+    async function ejecutar(accion, mensaje, motivo) {
         setAccionEnCurso(accion);
         try {
-            await solicitudesModelo[accion](solicitud.ID_SOLICITUD);
+            await solicitudesModelo[accion](solicitud.ID_SOLICITUD, motivo);
             avisar(mensaje);
             alCambiar();
             alCerrar();
@@ -29,5 +29,9 @@ export function useGestorSolicitud(solicitud, { alCambiar, alCerrar }) {
         return ejecutar('anular', 'Solicitud anulada');
     }
 
-    return { accionEnCurso, aceptar, anular };
+    function rechazar(motivo) {
+        return ejecutar('anular', 'Solicitud rechazada', motivo);
+    }
+
+    return { accionEnCurso, aceptar, anular, rechazar };
 }

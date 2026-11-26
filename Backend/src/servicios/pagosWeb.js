@@ -1,4 +1,4 @@
-// La selección se guarda fuera de Oracle hasta registrar el pago con el procedimiento existente.
+// La selección de pago y el motivo de rechazo se guardan fuera de Oracle.
 const { randomUUID } = require('node:crypto');
 const { mkdir, readFile, rename, unlink, writeFile } = require('node:fs/promises');
 const { join, resolve } = require('node:path');
@@ -24,12 +24,12 @@ async function leer(solicitud) {
     }
 }
 
-async function guardar(solicitud, pago) {
+async function guardar(solicitud, datos) {
     await mkdir(directorio, { recursive: true, mode: 0o700 });
     const destino = ruta(solicitud);
     const temporal = destino + '.' + randomUUID() + '.tmp';
     try {
-        await writeFile(temporal, JSON.stringify(pago), { flag: 'wx', mode: 0o600 });
+        await writeFile(temporal, JSON.stringify(datos), { flag: 'wx', mode: 0o600 });
         await rename(temporal, destino);
     } finally {
         await unlink(temporal).catch((error) => {
@@ -124,13 +124,19 @@ function aceptar(id, usuario) {
     return serializar(id, () => solicitudes.resolver(id, 'ACEPTADA', usuario));
 }
 
-async function anular(id, usuario) {
+async function anular(id, usuario, motivo) {
     return serializar(id, async () => {
         const solicitud = await buscar(id, null, usuario);
         if (solicitud.ESTADO === 'BORRADOR') {
             await pedidos.anular(id, usuario);
         } else if (solicitud.ESTADO === 'PENDIENTE') {
-            // El procedimiento existente cierra una solicitud pendiente como RECHAZADA.
+            const motivoRechazo = typeof motivo === 'string' ? motivo.trim() : '';
+            if (!motivoRechazo || motivoRechazo.length > 500) {
+                throw errorApp(20010, 'Ingresa un motivo de rechazo de entre 1 y 500 caracteres.');
+            }
+            const datos = await leer(solicitud);
+            // Guardar antes de resolver evita cerrar una solicitud si el motivo no se pudo guardar.
+            await guardar(solicitud, { ...datos, MOTIVO_RECHAZO: motivoRechazo });
             await solicitudes.resolver(id, 'RECHAZADA', usuario);
         } else {
             throw errorApp(20311, 'Solo se pueden anular solicitudes en borrador o pendientes.');
@@ -144,6 +150,9 @@ async function mostrar(solicitud) {
     if (!pago) return solicitud;
     return {
         ...solicitud,
+        ...(solicitud.ESTADO === 'RECHAZADA' && pago.MOTIVO_RECHAZO
+            ? { MOTIVO_RECHAZO: pago.MOTIVO_RECHAZO }
+            : {}),
         ID_METODO_PAGO: pago.ID_METODO_PAGO,
         METODO_PAGO: pago.METODO_PAGO,
         ID_TRANSACCION: ['CONFIRMADA', 'ANULADA'].includes(solicitud.ESTADO_VENTA) ? pago.ID_TRANSACCION : null
