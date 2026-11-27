@@ -142,6 +142,7 @@ Estas cuentas corresponden a la carga `DB/DATOS_DEMO.sql`. Las contraseñas dist
 #pagebreak(weak: true)
 
 == Enviar un producto y consultar su estado
++ Para dejar una indicación para la viña, escribe en «Observaciones» del borrador y pulsa «Guardar observaciones». Para quitar una indicación, borra el texto y vuelve a guardarlo. Después del envío puedes consultarla al abrir el pedido en el historial.
 + En el borrador, editar cantidades y pulsar «Guardar cantidad» cuando se quiera persistir una edición. «Quitar» elimina una línea. «Anular pedido» cancela el borrador completo después de pedir confirmación.
 + Seleccionar un método de pago activo en la fila y pulsar «Enviar producto». Si había varias líneas, la línea enviada pasa a su propia solicitud pendiente y las restantes siguen en el borrador. Si era la única línea, se envía el pedido actual.
 + Consultar el historial por folio. En un pendiente o un aceptado con venta en borrador se puede cambiar la selección con «Guardar método de pago». La selección identifica la forma de pago para el pedido. El envío web no realiza un cobro.

@@ -15,6 +15,9 @@ export function usePedido(pedido, alCambiar) {
         useDatos(pedidosModelo.RUTA_METODOS_PAGO_CLIENTE, { activo: editable || necesitaMetodo });
     const [selecciones, setSelecciones] = useState({});
     const [cantidades, setCantidades] = useState({});
+    const [edicionObservaciones, setObservaciones] = useState(null);
+    const observacionesGuardadas = pedido.OBSERVACIONES ?? '';
+    const observaciones = edicionObservaciones ?? observacionesGuardadas;
     const [ocupado, setOcupado] = useState(false);
     const operacion = useRef(false);
 
@@ -50,6 +53,13 @@ export function usePedido(pedido, alCambiar) {
         }
     }
 
+    function guardarObservaciones() {
+        return llamar(async () => {
+            await pedidosModelo.guardarObservaciones(id, observaciones);
+            setObservaciones(null);
+        }, 'Observaciones guardadas');
+    }
+
     function guardarCantidad(linea) {
         if (!cantidadValida(linea)) return;
         return llamar(async () => {
@@ -79,6 +89,8 @@ export function usePedido(pedido, alCambiar) {
         lineas, editable, total, necesitaMetodo, metodos, cargandoMetodos, errorMetodos, ocupado,
         cantidadDe, cantidadValida, subtotalDe, metodoDe, metodoValido, setMetodo,
         cambiarCantidad: (linea, valor) => setCantidades((previo) => ({ ...previo, [linea.ID_PRODUCTO]: valor })),
+        observaciones, setObservaciones, guardarObservaciones,
+        observacionesModificadas: observaciones !== observacionesGuardadas,
         guardarCantidad, enviarProducto, guardarMetodo,
         quitar: (linea) => llamar(() => pedidosModelo.quitarProducto(id, linea.ID_PRODUCTO), 'Producto quitado'),
         anular: () => window.confirm('¿Anular este pedido?') && llamar(() => pedidosModelo.anular(id), 'Pedido anulado')

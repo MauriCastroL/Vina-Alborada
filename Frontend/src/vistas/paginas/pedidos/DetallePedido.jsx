@@ -49,6 +49,17 @@ export default function DetallePedido({ pedido, alCambiar }) {
                 </div>
                 <div className="text-2xl font-semibold tabular-nums text-vino">{dinero(p.total)}</div>
             </div>
+            {p.editable ? (
+                <form className="mb-4 grid gap-2" onSubmit={(e) => { e.preventDefault(); p.guardarObservaciones(); }}>
+                    <label htmlFor={`observaciones-${pedido.ID_SOLICITUD}`}>Observaciones</label>
+                    <textarea id={`observaciones-${pedido.ID_SOLICITUD}`} maxLength={500}
+                        value={p.observaciones} onChange={(e) => p.setObservaciones(e.target.value)} disabled={p.ocupado} />
+                    <button type="submit" className="btn btn-sec justify-self-start"
+                        disabled={p.ocupado || !p.observacionesModificadas}>Guardar observaciones</button>
+                </form>
+            ) : pedido.OBSERVACIONES && (
+                <p className="mb-4 whitespace-pre-wrap">Observaciones: {pedido.OBSERVACIONES}</p>
+            )}
             <Tabla
                 filas={p.lineas} claveFila={(l) => l.ID_PRODUCTO} porPagina={20}
                 vacio={<>Tu pedido está vacío. <Link to="/">Ir a la tienda</Link></>}

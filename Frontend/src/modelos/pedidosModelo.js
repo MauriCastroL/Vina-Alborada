@@ -8,6 +8,8 @@ export const rutaProductos = (idSolicitud) => `${rutaPedido(idSolicitud)}/produc
 
 export const listar = () => api(RUTA_MIS_PEDIDOS);
 export const crear = () => api(RUTA_MIS_PEDIDOS, { metodo: 'POST', cuerpo: {} });
+export const guardarObservaciones = (idSolicitud, observaciones) =>
+    api(rutaPedido(idSolicitud), { metodo: 'PUT', cuerpo: { OBSERVACIONES: observaciones } });
 export const anular = (idSolicitud) => api(rutaPedido(idSolicitud), { metodo: 'DELETE' });
 export const enviar = (idSolicitud, idMetodoPago, producto) =>
     api(`${rutaPedido(idSolicitud)}/enviar`, {

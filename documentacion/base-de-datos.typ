@@ -9,7 +9,7 @@
 #outline(depth: 2)
 
 = Instalación y alcance
-`DB/script.sql` reconstruye el esquema Oracle. En orden, elimina objetos previos, crea 16 tablas y dos secuencias, instala los triggers de validación, instala los mantenedores y termina con auditoría, acceso, gestores transaccionales e informes. Ejecutar como script en SQLcl, SQL*Plus o SQL Developer (F5), con el usuario del esquema en la PDB configurada. Los `DROP` iniciales pueden informar objetos inexistentes en un esquema nuevo. En un esquema con datos, los `DROP TABLE … PURGE` destruyen su contenido. Para la demo, usar un esquema descartable y luego cargar `DB/DATOS_DEMO.sql` una vez, sobre el esquema recién instalado.
+`DB/script.sql` reconstruye el esquema Oracle. En orden, elimina objetos previos, crea 17 tablas y dos secuencias, instala los triggers de validación, instala los mantenedores y termina con auditoría, acceso, gestores transaccionales e informes. Ejecutar como script en SQLcl, SQL*Plus o SQL Developer (F5), con el usuario del esquema en la PDB configurada. Los `DROP` iniciales pueden informar objetos inexistentes en un esquema nuevo. En un esquema con datos, los `DROP TABLE … PURGE` destruyen su contenido. Para la demo, usar un esquema descartable y luego cargar `DB/DATOS_DEMO.sql` una vez, sobre el esquema recién instalado.
 
 ```sql
 @DB/script.sql
@@ -52,6 +52,8 @@ Los nombres de familias siguientes omiten el prefijo `CEMJ_PA_`. Las lecturas de
   [`DET_SOLIC`], [Crear, listar, modificar, eliminar], [Solo se escribe en borrador. Se usa el precio vigente al agregar y se refresca al enviar. Quitar borra la línea.],
   [`MOVIMIENTO`], [Crear, listar, modificar, eliminar], [Solo entrada y ajustes manuales. El borrador admite edición o anulación. Aplicar usa un gestor aparte.],
 )
+
+En la web, seis mantenedores tienen pantalla propia en «Mantenedores». La composición se edita en «Productos → Cepas» y los movimientos en «Inventario». El cliente crea el borrador y sus líneas desde la tienda. En «Mis pedidos» puede consultar el pedido, editar sus observaciones con `PUT /api/cliente/mis-solicitudes/:id` (procedimiento `CEMJ_PA_SOLICITUD_MODIFICAR`) y anular el borrador. En el detalle puede consultar las líneas, guardar cantidades y quitar productos.
 
 El catálogo público se construye con `CEMJ_PA_CATALOGO_LISTAR` y el ranking de destacados. El inventario se consulta junto a los productos y se modifica mediante gestores. La venta y su detalle se crean y consultan por gestores. El pago se genera al confirmar y la auditoría se consulta por listados específicos.
 
@@ -107,7 +109,7 @@ Crear entrada o ajuste → `BORRADOR` → `CEMJ_PA_GES_MOV_APLICAR` → `APLICAD
 + En Oracle, `CEMJ_PA_GES_SOLIC_RESOLVER` procesa pendientes. Si acepta, verifica disponibilidad y genera una venta digital en borrador con la copia del detalle y precios. Si rechaza, cierra sin venta. Ambos resultados registran responsable y fecha. Confirmar esa venta en Oracle usa G4.
 + El cliente elige el método de pago al enviar su pedido. Oracle lo registra en `CEMJ_PAGO_SOLICITUD` y genera el identificador de transacción, visible cuando la venta se confirma o se anula. El personal puede aceptar una solicitud pendiente o rechazarla indicando el motivo, que queda en `CEMJ_SOLICITUD_COMPRA.MOTIVO_RECHAZO`.
 
-Los gestores de escritura hacen `COMMIT` al finalizar y `ROLLBACK` ante errores. Los bloqueos `FOR UPDATE` protegen filas que se van a cambiar y los bloqueos de tabla aparecen, entre otros puntos, al asignar IDs. La auditoría DML participa en la operación que la generó. El login autónomo y la selección de pago en archivos tienen sus propios límites de persistencia.
+Los gestores de escritura hacen `COMMIT` al finalizar y `ROLLBACK` ante errores. Los bloqueos `FOR UPDATE` protegen filas que se van a cambiar y los bloqueos de tabla aparecen, entre otros puntos, al asignar IDs. La auditoría DML participa en la operación que la generó. El registro de acceso usa una transacción autónoma. El método de pago del pedido web se guarda en Oracle en `CEMJ_PAGO_SOLICITUD`.
 
 = Reportes y recorrido de defensa
 - *R1 · Ranking mensual.* `CEMJ_PA_REP_RANKING_PRODUCTOS` agrega cantidades y montos sobre ventas confirmadas en el mes, calcula participaciones y posiciones de más y menos vendidos. `CEMJ_PA_REP_MAS_VENDIDOS` presenta destacados activos con ventas, por defecto los tres primeros de los últimos 30 días.
@@ -408,6 +410,18 @@ CREATE TABLE CEMJ_PAGO(
     CONSTRAINT CEMJ_UQ_PAGO_VENTA UNIQUE(ID_VENTA)
 );
 ```
+
+=== #raw("CEMJ_PAGO_SOLICITUD")
+Guarda el método de pago elegido para una solicitud web. Una solicitud admite como máximo un registro y un método puede asociarse a varias solicitudes.
+
+#table(columns: (1fr, 1fr, 1.7fr),
+  table.header([Columna], [Tipo], [Restricciones]),
+  [`ID_PAGO_SOLICITUD`], [NUMBER], [Clave primaria],
+  [`ID_SOLICITUD`], [NUMBER], [Obligatoria, única, FK a solicitud],
+  [`ID_METODO_PAGO`], [NUMBER], [Obligatoria, FK a método de pago],
+  [`ID_TRANSACCION`], [VARCHAR2(32)], [Obligatoria y única],
+  [`FECHA_REGISTRO`], [DATE], [Obligatoria],
+)
 
 === #raw("CEMJ_MOVIMIENTO_INVENTARIO")
 Línea 417 de `DB/script.sql`.
