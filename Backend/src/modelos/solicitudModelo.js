@@ -14,4 +14,14 @@ async function resolver(idSolicitud, decision, usuario) {
     return salida.P_ID_VENTA;
 }
 
-module.exports = { enviar, resolver };
+const registrarPago = (idSolicitud, idMetodoPago, usuario) =>
+    db.ejecutar('CEMJ_PA_PAGO_SOLICITUD_REGISTRAR', {
+        P_ID_SOLICITUD: idSolicitud, P_ID_METODO_PAGO: idMetodoPago
+    }, usuario);
+
+const rechazar = (idSolicitud, motivo, usuario) =>
+    db.ejecutar('CEMJ_PA_SOLICITUD_RECHAZAR', {
+        P_ID_SOLICITUD: idSolicitud, P_ID_USUARIO: usuario.id, P_MOTIVO_RECHAZO: motivo
+    }, usuario);
+
+module.exports = { enviar, resolver, registrarPago, rechazar };

@@ -6,7 +6,7 @@ const { errorApp } = require('../utilidades/errores');
 
 const listar = asincrono(async (req, res) => {
     const filas = await pedidoModelo.listar(req.usuario.idCliente, req.usuario);
-    res.json(await Promise.all(filas.map(pagosWeb.mostrar)));
+    res.json(filas);
 });
 
 const listarMetodosPago = asincrono(async (req, res) => {

@@ -1,42 +1,8 @@
-// La selección de pago y el motivo de rechazo se guardan fuera de Oracle.
-const { randomUUID } = require('node:crypto');
-const { mkdir, readFile, rename, unlink, writeFile } = require('node:fs/promises');
-const { join, resolve } = require('node:path');
 const pedidos = require('../modelos/pedidoModelo');
 const solicitudes = require('../modelos/solicitudModelo');
 const { errorApp } = require('../utilidades/errores');
 
-const directorio = resolve(process.env.PAGOS_WEB_DIR || join(__dirname, '..', '..', '.pagos-web'));
 const operaciones = new Map();
-
-function ruta(solicitud) {
-    const clave = [solicitud.ID_SOLICITUD, solicitud.NUMERO_FOLIO, solicitud.ID_CLIENTE,
-        new Date(solicitud.FECHA_CREACION).getTime()].join('-');
-    return join(directorio, clave + '.json');
-}
-
-async function leer(solicitud) {
-    try {
-        return JSON.parse(await readFile(ruta(solicitud), 'utf8'));
-    } catch (error) {
-        if (error.code === 'ENOENT') return null;
-        throw error;
-    }
-}
-
-async function guardar(solicitud, datos) {
-    await mkdir(directorio, { recursive: true, mode: 0o700 });
-    const destino = ruta(solicitud);
-    const temporal = destino + '.' + randomUUID() + '.tmp';
-    try {
-        await writeFile(temporal, JSON.stringify(datos), { flag: 'wx', mode: 0o600 });
-        await rename(temporal, destino);
-    } finally {
-        await unlink(temporal).catch((error) => {
-            if (error.code !== 'ENOENT') throw error;
-        });
-    }
-}
 
 async function serializar(id, trabajo) {
     const clave = String(id);
@@ -110,12 +76,7 @@ async function enviar(id, { idMetodoPago, idProducto, cantidad }, usuario) {
             }
         }
 
-        const anterior = await leer(solicitud);
-        await guardar(solicitud, {
-            ID_METODO_PAGO: idMetodoPago,
-            METODO_PAGO: metodo.NOMBRE,
-            ID_TRANSACCION: anterior?.ID_TRANSACCION || randomUUID()
-        });
+        await solicitudes.registrarPago(solicitud.ID_SOLICITUD, idMetodoPago, usuario);
         if (borrador) await solicitudes.enviar(solicitud.ID_SOLICITUD, usuario);
     }));
 }
@@ -134,40 +95,11 @@ async function anular(id, usuario, motivo) {
             if (!motivoRechazo || motivoRechazo.length > 500) {
                 throw errorApp(20010, 'Ingresa un motivo de rechazo de entre 1 y 500 caracteres.');
             }
-            const datos = await leer(solicitud);
-            // Guardar antes de resolver evita cerrar una solicitud si el motivo no se pudo guardar.
-            await guardar(solicitud, { ...datos, MOTIVO_RECHAZO: motivoRechazo });
-            await solicitudes.resolver(id, 'RECHAZADA', usuario);
+            await solicitudes.rechazar(id, motivoRechazo, usuario);
         } else {
             throw errorApp(20311, 'Solo se pueden anular solicitudes en borrador o pendientes.');
         }
     });
 }
 
-async function mostrar(solicitud) {
-    if (solicitud.ESTADO === 'BORRADOR') return solicitud;
-    const pago = await leer(solicitud);
-    if (!pago) return solicitud;
-    return {
-        ...solicitud,
-        ...(solicitud.ESTADO === 'RECHAZADA' && pago.MOTIVO_RECHAZO
-            ? { MOTIVO_RECHAZO: pago.MOTIVO_RECHAZO }
-            : {}),
-        ID_METODO_PAGO: pago.ID_METODO_PAGO,
-        METODO_PAGO: pago.METODO_PAGO,
-        ID_TRANSACCION: ['CONFIRMADA', 'ANULADA'].includes(solicitud.ESTADO_VENTA) ? pago.ID_TRANSACCION : null
-    };
-}
-
-async function mostrarVentas(filas, usuario) {
-    if (!filas.some((venta) => venta.CANAL_VENTA === 'DIGITAL')) return filas;
-    const solicitudesPorVenta = new Map((await pedidos.listar(null, usuario)).map((fila) => [fila.ID_VENTA, fila]));
-    return Promise.all(filas.map(async (venta) => {
-        const solicitud = solicitudesPorVenta.get(venta.ID_VENTA);
-        if (!solicitud) return venta;
-        const datos = await mostrar(solicitud);
-        return { ...venta, METODO_PAGO: venta.METODO_PAGO || datos.METODO_PAGO, ID_TRANSACCION: datos.ID_TRANSACCION };
-    }));
-}
-
-module.exports = { enviar, aceptar, anular, mostrar, mostrarVentas, serializar };
+module.exports = { enviar, aceptar, anular, serializar };

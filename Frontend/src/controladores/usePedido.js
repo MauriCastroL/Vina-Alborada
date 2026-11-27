@@ -69,7 +69,10 @@ export function usePedido(pedido, alCambiar) {
     function guardarMetodo(e) {
         e.preventDefault();
         if (!metodoValido()) return;
-        return llamar(() => pedidosModelo.enviar(id, Number(metodoDe())), 'Método de pago guardado');
+        return llamar(async () => {
+            await pedidosModelo.enviar(id, Number(metodoDe()));
+            setSelecciones(({ pedido: guardado, ...resto }) => resto);
+        }, 'Método de pago guardado');
     }
 
     return {

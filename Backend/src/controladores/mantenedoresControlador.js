@@ -4,8 +4,6 @@ const servicio = require('../servicios/mantenedorServicio');
 const crearProducto = require('../servicios/creacionProducto');
 const validarFormatoProducto = require('../servicios/formatoProducto');
 const productos = require('../modelos/mantenedores/productos');
-const pagosWeb = require('../servicios/pagosWeb');
-const solicitudes = require('../modelos/mantenedores/solicitudes');
 const asincrono = require('../utilidades/asincrono');
 
 const listar = asincrono(async (req, res) => {
@@ -14,7 +12,7 @@ const listar = asincrono(async (req, res) => {
         return res.status(400).json({ error: `FALTA EL FILTRO ${faltante}` });
     }
     const filas = await mantenedorModelo.listar(req.recurso, params, req.usuario);
-    res.json(req.recurso === solicitudes ? await Promise.all(filas.map(pagosWeb.mostrar)) : filas);
+    res.json(filas);
 });
 
 const crear = asincrono(async (req, res) => {

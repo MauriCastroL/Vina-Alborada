@@ -1,13 +1,12 @@
 // Controlador de ventas: listado, detalle, venta presencial (G2), confirmar con pago (G4) y anular (G5)
 const { randomUUID } = require('node:crypto');
 const ventaModelo = require('../modelos/ventaModelo');
-const pagosWeb = require('../servicios/pagosWeb');
 const { errorApp } = require('../utilidades/errores');
 const asincrono = require('../utilidades/asincrono');
 
 const listar = asincrono(async (req, res) => {
     const filas = await ventaModelo.listar(req.query.estado, req.usuario);
-    res.json(await pagosWeb.mostrarVentas(filas, req.usuario));
+    res.json(filas);
 });
 
 const detalle = asincrono(async (req, res) => {
