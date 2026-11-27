@@ -213,12 +213,16 @@ Estas cuentas corresponden a la carga `DB/DATOS_DEMO.sql`. Las contraseñas dist
 
 #pagebreak(weak: true)
 
-== Consultar o anular solicitudes web
-Abre «Solicitudes web», busca el folio y pulsa «Ver detalle». Ver cliente, fecha y estado en el listado, y productos, cantidades, subtotales, total y método cuando se ha elegido uno. «Ver venta N°» aparece si existe una venta vinculada. «Anular solicitud» está disponible en borrador y pendiente. Una solicitud pendiente anulada por el personal queda como rechazada. La versión actual del panel ofrece consulta y anulación. El procedimiento de aceptación está en Oracle y la confirmación del panel se limita a ventas presenciales.
+== Consultar y gestionar solicitudes web
+Abre «Solicitudes web», busca el folio y pulsa «Ver detalle». El listado muestra cliente, fecha y estado. En el detalle puedes revisar los productos, las cantidades, el total, las observaciones del cliente y el método de pago elegido.
+
++ Para una solicitud pendiente, pulsa «Aceptar solicitud» para generar una venta digital en borrador. Abre la venta vinculada con «Ver venta N°». La confirmación de la venta digital se realiza en Oracle.
++ Para rechazar una solicitud pendiente, pulsa «Rechazar solicitud», escribe el motivo obligatorio y pulsa «Confirmar rechazo». El cliente puede consultar ese motivo en «Mis pedidos».
++ Si la solicitud sigue en borrador, usa «Anular solicitud» para cancelarla.
 
 #captura("solicitudes-listado", [Listado con folio, cliente, total, estado y venta vinculada.], ancho: 94%)
 
-#captura("solicitud-detalle", [Detalle de una solicitud web y las acciones disponibles según su estado.], ancho: 92mm)
+#captura("solicitud-detalle", [Vista de referencia del detalle de una solicitud web.], ancho: 92mm)
 
 #pagebreak(weak: true)
 

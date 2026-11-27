@@ -106,8 +106,8 @@ Crear entrada o ajuste → `BORRADOR` → `CEMJ_PA_GES_MOV_APLICAR` → `APLICAD
 == G3 · Pedido web y venta digital
 + El catálogo crea o reutiliza una solicitud `BORRADOR`. Se agregan líneas con cantidad y precio. Backend verifica que el solicitante sea el propietario para operar sobre su pedido.
 + El cliente elige método activo. La web tramita por producto. Si el borrador tiene más líneas, el backend separa la elegida en otra solicitud y mantiene las restantes en el borrador. `CEMJ_PA_GES_SOLIC_ENVIAR` exige al menos una línea, comprueba que los productos sigan activos, refresca precios y marca `PENDIENTE`. Enviar no descuenta stock.
-+ En Oracle, `CEMJ_PA_GES_SOLIC_RESOLVER` procesa pendientes. Si acepta, verifica disponibilidad y genera una venta digital en borrador con la copia del detalle y precios. Si rechaza, cierra sin venta. Ambos resultados registran responsable y fecha. Confirmar esa venta en Oracle usa G4.
-+ El cliente elige el método de pago al enviar su pedido. Oracle lo registra en `CEMJ_PAGO_SOLICITUD` y genera el identificador de transacción, visible cuando la venta se confirma o se anula. El personal puede aceptar una solicitud pendiente o rechazarla indicando el motivo, que queda en `CEMJ_SOLICITUD_COMPRA.MOTIVO_RECHAZO`.
++ En «Solicitudes web», «Aceptar solicitud» invoca `CEMJ_PA_GES_SOLIC_RESOLVER`. Oracle verifica disponibilidad y genera una venta digital en borrador con el detalle y los precios del pedido. El panel enlaza la venta mediante «Ver venta N°». Confirmar esa venta en Oracle usa G4.
++ El cliente elige el método de pago al enviar su pedido. Oracle lo registra en `CEMJ_PAGO_SOLICITUD` y genera el identificador de transacción, visible cuando la venta se confirma o se anula. Al rechazar una solicitud pendiente desde el panel, `CEMJ_PA_SOLICITUD_RECHAZAR` registra el responsable, la fecha y el motivo obligatorio en `CEMJ_SOLICITUD_COMPRA`.
 
 Los gestores de escritura hacen `COMMIT` al finalizar y `ROLLBACK` ante errores. Los bloqueos `FOR UPDATE` protegen filas que se van a cambiar y los bloqueos de tabla aparecen, entre otros puntos, al asignar IDs. La auditoría DML participa en la operación que la generó. El registro de acceso usa una transacción autónoma. El método de pago del pedido web se guarda en Oracle en `CEMJ_PAGO_SOLICITUD`.
 
@@ -133,7 +133,7 @@ FETCH FIRST 20 ROWS ONLY;
 ```
 
 == Completar una venta digital en la base de demostración
-Elegir el ID de una solicitud pendiente por su folio, el ID de un administrador o vendedor activo y el ID de un método activo. El método se pasa explícitamente porque el gestor Oracle lee el ID recibido y la selección de la web vive en el backend. Ejecutar como script en SQLcl o SQL*Plus y sustituir los valores solicitados. Cada gestor confirma su propia transacción. Si la confirmación falla después de la aceptación, conservar el ID de venta y reintentar solo la confirmación una vez corregida la causa.
+Elegir el ID de una solicitud pendiente por su folio, el ID de un administrador o vendedor activo y el ID de un método activo. La selección de la web se guarda en `CEMJ_PAGO_SOLICITUD`. En esta prueba SQL se pasa explícitamente al gestor el ID del método de pago. Ejecutar como script en SQLcl o SQL*Plus y sustituir los valores solicitados. Cada gestor confirma su propia transacción. Si la confirmación falla después de la aceptación, conservar el ID de venta y reintentar solo la confirmación una vez corregida la causa.
 
 ```sql
 SELECT id_solicitud, numero_folio
@@ -414,14 +414,22 @@ CREATE TABLE CEMJ_PAGO(
 === #raw("CEMJ_PAGO_SOLICITUD")
 Guarda el método de pago elegido para una solicitud web. Una solicitud admite como máximo un registro y un método puede asociarse a varias solicitudes.
 
-#table(columns: (1fr, 1fr, 1.7fr),
-  table.header([Columna], [Tipo], [Restricciones]),
-  [`ID_PAGO_SOLICITUD`], [NUMBER], [Clave primaria],
-  [`ID_SOLICITUD`], [NUMBER], [Obligatoria, única, FK a solicitud],
-  [`ID_METODO_PAGO`], [NUMBER], [Obligatoria, FK a método de pago],
-  [`ID_TRANSACCION`], [VARCHAR2(32)], [Obligatoria y única],
-  [`FECHA_REGISTRO`], [DATE], [Obligatoria],
-)
+```sql
+CREATE TABLE CEMJ_PAGO_SOLICITUD(
+    ID_PAGO_SOLICITUD NUMBER NOT NULL,
+    ID_SOLICITUD NUMBER NOT NULL,
+    ID_METODO_PAGO NUMBER NOT NULL,
+    ID_TRANSACCION VARCHAR2(32) NOT NULL,
+    FECHA_REGISTRO DATE NOT NULL,
+    CONSTRAINT CEMJ_PK_PAGO_SOLICITUD PRIMARY KEY(ID_PAGO_SOLICITUD),
+    CONSTRAINT CEMJ_FK_PAGO_SOLICITUD_SOLICITUD_COMPRA FOREIGN KEY(ID_SOLICITUD)
+        REFERENCES CEMJ_SOLICITUD_COMPRA(ID_SOLICITUD),
+    CONSTRAINT CEMJ_FK_PAGO_SOLICITUD_METODO_PAGO FOREIGN KEY(ID_METODO_PAGO)
+        REFERENCES CEMJ_METODO_PAGO(ID_METODO_PAGO),
+    CONSTRAINT CEMJ_UQ_PAGO_SOLICITUD_SOLICITUD UNIQUE(ID_SOLICITUD),
+    CONSTRAINT CEMJ_UQ_PAGO_SOLICITUD_TRANSACCION UNIQUE(ID_TRANSACCION)
+);
+```
 
 === #raw("CEMJ_MOVIMIENTO_INVENTARIO")
 Línea 417 de `DB/script.sql`.
