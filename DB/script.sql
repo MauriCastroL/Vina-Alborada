@@ -1,3 +1,11 @@
+-- Ramo: Bases de datos
+-- Docente: Carlos Andrés Castro Bustamante
+-- Integrantes y secciones: 
+    -- Mauricio Enrique Castro Leal Secc-3
+    -- Emerson Eduardo Fuenzalida Muñoz Secc-2
+    -- Cristóbal Alonso Villalobos Saavedra Secc-2
+    -- José Cristóbal Cáceres Jelves Secc-2
+
 SET SQLBLANKLINES ON
 
 DROP TRIGGER CEMJ_TRIGGER_ROL_INSERT;
