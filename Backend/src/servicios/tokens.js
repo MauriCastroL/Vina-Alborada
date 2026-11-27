@@ -1,13 +1,13 @@
 // Tokens de sesion (JWT): creacion y verificacion
 const jwt = require('jsonwebtoken');
-const config = require('../config/entorno');
+const configuracion = require('../config/entorno');
 
 function crearToken(usuario) {
-    return jwt.sign(usuario, config.jwtSecreto, { expiresIn: config.jwtDuracion });
+    return jwt.sign(usuario, configuracion.jwtSecreto, { expiresIn: configuracion.jwtDuracion });
 }
 
 function verificarToken(token) {
-    const datos = jwt.verify(token, config.jwtSecreto);
+    const datos = jwt.verify(token, configuracion.jwtSecreto);
     return { id: datos.id, correo: datos.correo, rol: datos.rol, idCliente: datos.idCliente };
 }
 

@@ -5,18 +5,20 @@ import { borrarSesion, guardarSesion, leerSesion } from '../modelos/almacenSesio
 
 const ContextoSesion = createContext(null);
 
-export function ProveedorSesion({ children }) {
+export function ProveedorSesion(opciones) {
+    const children = opciones.children;
+
     const [sesion, setSesion] = useState(leerSesion);
 
-    useEffect(() => {
+    useEffect(function () {
         if (!sesion) return;
         accesoModelo.obtenerSesion()
-            .then((datos) => {
+            .then(function (datos) {
                 const nueva = { ...leerSesion(), ...datos };
                 guardarSesion(nueva);
                 setSesion(nueva);
             })
-            .catch(() => {});
+            .catch(function () { });
     }, []);
 
     async function iniciar(correo, clave) {
@@ -43,7 +45,9 @@ export function ProveedorSesion({ children }) {
         sesion,
         usuario: sesion?.usuario || null,
         modulos,
-        tiene: (modulo) => modulos.includes(modulo),
+        tiene: function (modulo) {
+            return modulos.includes(modulo);
+        },
         iniciar,
         registrar,
         cerrar
@@ -51,4 +55,6 @@ export function ProveedorSesion({ children }) {
     return <ContextoSesion.Provider value={valor}>{children}</ContextoSesion.Provider>;
 }
 
-export const useSesion = () => useContext(ContextoSesion);
+export function useSesion() {
+    return useContext(ContextoSesion);
+}

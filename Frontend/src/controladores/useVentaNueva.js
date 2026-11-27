@@ -12,19 +12,29 @@ export function useVentaNueva() {
     const { datos: clientes } = useDatos(RUTA_CLIENTES);
     const [valores, setValores] = useState({ TIPO: 'MOSTRADOR', LUGAR_VENTA: 'Sala de ventas Viña La Alborada' });
 
-    async function crear(e) {
-        e.preventDefault();
+    async function crear(evento) {
+        evento.preventDefault();
         try {
+            let idCliente = null;
+            if (valores.TIPO === 'CLIENTE') {
+                idCliente = valores.ID_CLIENTE;
+            }
+
+            let nombreComprador = null;
+            if (valores.TIPO === 'MOSTRADOR') {
+                nombreComprador = valores.NOMBRE_COMPRADOR;
+            }
+
             const { ID_VENTA } = await ventasModelo.crear({
-                ID_CLIENTE: valores.TIPO === 'CLIENTE' ? valores.ID_CLIENTE : null,
-                NOMBRE_COMPRADOR: valores.TIPO === 'MOSTRADOR' ? valores.NOMBRE_COMPRADOR : null,
+                ID_CLIENTE: idCliente,
+                NOMBRE_COMPRADOR: nombreComprador,
                 LUGAR_VENTA: valores.LUGAR_VENTA,
                 OBSERVACIONES: valores.OBSERVACIONES
             });
             avisar(`Venta N° ${ID_VENTA} creada: agregue los productos`);
             navegar(`/ventas/${ID_VENTA}`);
-        } catch (err) {
-            avisar(err.message, 'error');
+        } catch (error) {
+            avisar(error.message, 'error');
         }
     }
 

@@ -2,23 +2,23 @@
 const accesoServicio = require('../servicios/accesoServicio');
 const asincrono = require('../utilidades/asincrono');
 
-const login = asincrono(async (req, res) => {
-    const { correo, clave } = req.body || {};
-    res.json(await accesoServicio.iniciarSesion(correo, clave));
+const login = asincrono(async function (peticion, respuesta) {
+    const { correo, clave } = peticion.body || {};
+    respuesta.json(await accesoServicio.iniciarSesion(correo, clave));
 });
 
-const registro = asincrono(async (req, res) => {
-    res.json(await accesoServicio.registrarCliente(req.body || {}));
+const registro = asincrono(async function (peticion, respuesta) {
+    respuesta.json(await accesoServicio.registrarCliente(peticion.body || {}));
 });
 
-const sesion = asincrono(async (req, res) => {
-    res.json(await accesoServicio.datosSesion(req.usuario));
+const sesion = asincrono(async function (peticion, respuesta) {
+    respuesta.json(await accesoServicio.datosSesion(peticion.usuario));
 });
 
-const cambiarClave = asincrono(async (req, res) => {
-    const { claveActual, claveNueva } = req.body || {};
-    await accesoServicio.cambiarClave(req.usuario, claveActual, claveNueva);
-    res.json({ ok: true });
+const cambiarClave = asincrono(async function (peticion, respuesta) {
+    const { claveActual, claveNueva } = peticion.body || {};
+    await accesoServicio.cambiarClave(peticion.usuario, claveActual, claveNueva);
+    respuesta.json({ ok: true });
 });
 
 module.exports = { login, registro, sesion, cambiarClave };

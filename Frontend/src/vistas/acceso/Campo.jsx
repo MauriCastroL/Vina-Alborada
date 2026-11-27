@@ -1,5 +1,10 @@
-// Vista: campo de formulario con etiqueta visible, marca de obligatorio y ayuda
-export default function Campo({ id, etiqueta, requerido, ayuda, children }) {
+export default function Campo(propiedades) {
+    const id = propiedades.id;
+    const etiqueta = propiedades.etiqueta;
+    const requerido = propiedades.requerido;
+    const ayuda = propiedades.ayuda;
+    const children = propiedades.children;
+
     return (
         <div className="flex flex-col gap-1">
             <label htmlFor={id} className="text-sm font-medium">

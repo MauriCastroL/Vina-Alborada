@@ -1,10 +1,10 @@
 // Controlador de salud: confirma que la API responde y que hay conexion con Oracle
-const db = require('../config/baseDatos');
+const baseDatos = require('../config/baseDatos');
 const asincrono = require('../utilidades/asincrono');
 
-const estado = asincrono(async (req, res) => {
-    await db.probarConexion();
-    res.json({ ok: true, baseDeDatos: 'conectada' });
+const estado = asincrono(async function (peticion, respuesta) {
+    await baseDatos.probarConexion();
+    respuesta.json({ ok: true, baseDeDatos: 'conectada' });
 });
 
 module.exports = { estado };

@@ -2,7 +2,11 @@
 import { cantidadConUnidad } from '../../utilidades/formato.js';
 import Modal from '../componentes/Modal.jsx';
 
-export default function ModalIniciarSesion({ producto, alCerrar, alIr }) {
+export default function ModalIniciarSesion(propiedades) {
+    const producto = propiedades.producto;
+    const alCerrar = propiedades.alCerrar;
+    const alIr = propiedades.alIr;
+
     return (
         <Modal titulo="Inicia sesión para continuar" abierto={!!producto} ancho="chico" alCerrar={alCerrar}>
             <p className="text-sm leading-relaxed">

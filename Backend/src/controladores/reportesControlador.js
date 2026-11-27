@@ -2,16 +2,21 @@
 const reporteModelo = require('../modelos/reporteModelo');
 const asincrono = require('../utilidades/asincrono');
 
-const rankingProductos = asincrono(async (req, res) => {
-    res.json(await reporteModelo.rankingProductos(req.query.anio || null, req.query.mes || null, req.usuario));
+const rankingProductos = asincrono(async function (peticion, respuesta) {
+    respuesta.json(await reporteModelo.rankingProductos(peticion.query.anio || null, peticion.query.mes || null, peticion.usuario));
 });
 
-const ventasPorCanal = asincrono(async (req, res) => {
-    res.json(await reporteModelo.ventasPorCanal(req.query.anio || null, req.usuario));
+const ventasPorCanal = asincrono(async function (peticion, respuesta) {
+    respuesta.json(await reporteModelo.ventasPorCanal(peticion.query.anio || null, peticion.usuario));
 });
 
-const stockCritico = asincrono(async (req, res) => {
-    res.json(await reporteModelo.stockCritico(req.query.dias || 30, req.query.soloAlertas === '1' ? 1 : 0, req.usuario));
+const stockCritico = asincrono(async function (peticion, respuesta) {
+    let soloAlertas = 0;
+    if (peticion.query.soloAlertas === '1') {
+        soloAlertas = 1;
+    }
+
+    respuesta.json(await reporteModelo.stockCritico(peticion.query.dias || 30, soloAlertas, peticion.usuario));
 });
 
 module.exports = { rankingProductos, ventasPorCanal, stockCritico };

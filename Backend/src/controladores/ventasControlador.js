@@ -4,42 +4,44 @@ const ventaModelo = require('../modelos/ventaModelo');
 const { errorApp } = require('../utilidades/errores');
 const asincrono = require('../utilidades/asincrono');
 
-const listar = asincrono(async (req, res) => {
-    const filas = await ventaModelo.listar(req.query.estado, req.usuario);
-    res.json(filas);
+const listar = asincrono(async function (peticion, respuesta) {
+    const filas = await ventaModelo.listar(peticion.query.estado, peticion.usuario);
+    respuesta.json(filas);
 });
 
-const detalle = asincrono(async (req, res) => {
-    res.json(await ventaModelo.detalle(req.params.id, req.usuario));
+const detalle = asincrono(async function (peticion, respuesta) {
+    respuesta.json(await ventaModelo.detalle(peticion.params.id, peticion.usuario));
 });
 
-const crear = asincrono(async (req, res) => {
-    const idVenta = await ventaModelo.crear(req.body || {}, req.usuario);
-    res.status(201).json({ ID_VENTA: idVenta });
+const crear = asincrono(async function (peticion, respuesta) {
+    const idVenta = await ventaModelo.crear(peticion.body || {}, peticion.usuario);
+    respuesta.status(201).json({ ID_VENTA: idVenta });
 });
 
-const agregarProducto = asincrono(async (req, res) => {
-    const c = req.body || {};
-    await ventaModelo.agregarProducto(req.params.id, c.ID_PRODUCTO, c.CANTIDAD, req.usuario);
-    res.json({ ok: true });
+const agregarProducto = asincrono(async function (peticion, respuesta) {
+    const cuerpo = peticion.body || {};
+    await ventaModelo.agregarProducto(peticion.params.id, cuerpo.ID_PRODUCTO, cuerpo.CANTIDAD, peticion.usuario);
+    respuesta.json({ ok: true });
 });
 
-const confirmar = asincrono(async (req, res) => {
-    const c = req.body || {};
-    const ventas = await ventaModelo.listar(null, req.usuario);
-    const venta = ventas.find((fila) => String(fila.ID_VENTA) === String(req.params.id));
+const confirmar = asincrono(async function (peticion, respuesta) {
+    const cuerpo = peticion.body || {};
+    const ventas = await ventaModelo.listar(null, peticion.usuario);
+    const venta = ventas.find(function (fila) {
+        return String(fila.ID_VENTA) === String(peticion.params.id);
+    });
     if (!venta) throw errorApp(20100, 'VENTA NO ENCONTRADA');
     if (venta.CANAL_VENTA === 'DIGITAL') {
         throw errorApp(20314, 'ESTA OPERACION SOLO CONFIRMA VENTAS PRESENCIALES');
     }
     const referencia = `VP-${randomUUID().toUpperCase()}`;
-    await ventaModelo.confirmar(req.params.id, c.ID_METODO_PAGO, referencia, req.usuario);
-    res.json({ ok: true, REFERENCIA: referencia });
+    await ventaModelo.confirmar(peticion.params.id, cuerpo.ID_METODO_PAGO, referencia, peticion.usuario);
+    respuesta.json({ ok: true, REFERENCIA: referencia });
 });
 
-const anular = asincrono(async (req, res) => {
-    await ventaModelo.anular(req.params.id, (req.body || {}).MOTIVO, req.usuario);
-    res.json({ ok: true });
+const anular = asincrono(async function (peticion, respuesta) {
+    await ventaModelo.anular(peticion.params.id, (peticion.body || {}).MOTIVO, peticion.usuario);
+    respuesta.json({ ok: true });
 });
 
 module.exports = { listar, detalle, crear, agregarProducto, confirmar, anular };

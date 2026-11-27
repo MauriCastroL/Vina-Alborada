@@ -1,7 +1,11 @@
 // Vista: seccion "Los más vendidos" (ranking calculado por la base de datos)
 import Destacado from './Destacado.jsx';
 
-export default function SeccionDestacados({ destacados, agregando, alComprar }) {
+export default function SeccionDestacados(propiedades) {
+    const destacados = propiedades.destacados;
+    const agregando = propiedades.agregando;
+    const alComprar = propiedades.alComprar;
+
     if (destacados.length === 0) return null;
     return (
         <section id="destacados" aria-labelledby="titulo-destacados"
@@ -16,11 +20,16 @@ export default function SeccionDestacados({ destacados, agregando, alComprar }) 
                     </p>
                 </div>
                 <div className="grid gap-x-8 gap-y-14 md:grid-cols-3">
-                    {destacados.map(({ p, posicion }) => (
-                        <Destacado key={p.ID_PRODUCTO} p={p} posicion={posicion}
-                            agregando={agregando === p.ID_PRODUCTO}
-                            alAgregar={() => alComprar(p)} />
-                    ))}
+                    {destacados.map(function (destacado) {
+                        const producto = destacado.producto;
+                        const posicion = destacado.posicion;
+
+                        return (
+                            <Destacado key={producto.ID_PRODUCTO} producto={producto} posicion={posicion}
+                                agregando={agregando === producto.ID_PRODUCTO}
+                                alAgregar={() => alComprar(producto)} />
+                        );
+                    })}
                 </div>
             </div>
         </section>

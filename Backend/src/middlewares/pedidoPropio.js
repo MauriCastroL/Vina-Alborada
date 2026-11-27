@@ -2,11 +2,11 @@
 const pedidoModelo = require('../modelos/pedidoModelo');
 const asincrono = require('../utilidades/asincrono');
 
-const pedidoPropio = asincrono(async (req, res, next) => {
-    if (!(await pedidoModelo.esDelCliente(req.params.id, req.usuario.idCliente, req.usuario))) {
-        return res.status(404).json({ error: 'SOLICITUD NO ENCONTRADA' });
+const pedidoPropio = asincrono(async function (peticion, respuesta, continuar) {
+    if (!(await pedidoModelo.esDelCliente(peticion.params.id, peticion.usuario.idCliente, peticion.usuario))) {
+        return respuesta.status(404).json({ error: 'SOLICITUD NO ENCONTRADA' });
     }
-    next();
+    continuar();
 });
 
 module.exports = pedidoPropio;

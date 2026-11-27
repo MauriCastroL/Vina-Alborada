@@ -6,12 +6,12 @@ const autenticar = require('../middlewares/autenticacion');
 const permiso = require('../middlewares/permisos');
 const pedidoPropio = require('../middlewares/pedidoPropio');
 
-const router = express.Router();
+const rutas = express.Router();
 
-router.get('/catalogo', catalogo.listar);
-router.get('/mas-vendidos', catalogo.masVendidos);
+rutas.get('/catalogo', catalogo.listar);
+rutas.get('/mas-vendidos', catalogo.masVendidos);
 
-router.use(autenticar);
+rutas.use(autenticar);
 
 const misSolicitudes = express.Router();
 misSolicitudes.use(permiso('MIS_SOLICITUDES'));
@@ -26,6 +26,6 @@ misSolicitudes.put('/:id/productos/:idProducto', pedidoPropio, pedidos.cambiarCa
 misSolicitudes.delete('/:id/productos/:idProducto', pedidoPropio, pedidos.quitarProducto);
 misSolicitudes.post('/:id/enviar', pedidoPropio, pedidos.enviar);
 
-router.use('/mis-solicitudes', misSolicitudes);
+rutas.use('/mis-solicitudes', misSolicitudes);
 
-module.exports = router;
+module.exports = rutas;

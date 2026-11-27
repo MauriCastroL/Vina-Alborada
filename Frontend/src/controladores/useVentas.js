@@ -9,10 +9,23 @@ export function useVentas() {
     const [busqueda, setBusqueda] = useState('');
     const { datos: ventas, cargando } = useDatos(rutaListar(estado));
 
-    const filas = useMemo(() => {
-        const q = normalizar(busqueda.trim());
+    const filas = useMemo(function () {
+        const consulta = normalizar(busqueda.trim());
         const lista = [...ventas].reverse();
-        return q ? lista.filter((v) => Object.values(v).some((x) => normalizar(x).includes(q))) : lista;
+        if (!consulta) {
+            return lista;
+        }
+
+        const coincidencias = [];
+        for (const venta of lista) {
+            for (const valor of Object.values(venta)) {
+                if (normalizar(valor).includes(consulta)) {
+                    coincidencias.push(venta);
+                    break;
+                }
+            }
+        }
+        return coincidencias;
     }, [ventas, busqueda]);
 
     return { ventas, filas, cargando, estado, setEstado, busqueda, setBusqueda };

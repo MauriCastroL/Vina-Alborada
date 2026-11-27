@@ -1,14 +1,21 @@
-// Guardias de rutas: exigir sesion y exigir permiso sobre un modulo
 import { Navigate, useLocation } from 'react-router-dom';
 import { useSesion } from '../controladores/SesionContexto.jsx';
 
-export function Protegida({ children }) {
+export function Protegida(propiedades) {
+    const children = propiedades.children;
+
     const { sesion } = useSesion();
     const { pathname } = useLocation();
-    return sesion ? children : <Navigate to={`/login?volver=${encodeURIComponent(pathname)}`} replace />;
+    if (sesion) {
+        return children;
+    }
+    return <Navigate to={`/login?volver=${encodeURIComponent(pathname)}`} replace />;
 }
 
-export function ConModulo({ modulo, children }) {
+export function ConModulo(propiedades) {
+    const modulo = propiedades.modulo;
+    const children = propiedades.children;
+
     const { tiene } = useSesion();
     if (!tiene(modulo)) {
         return (

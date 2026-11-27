@@ -1,4 +1,3 @@
-// Menu del panel: grupos, rutas, iconos (Lucide) y el modulo que exige cada enlace
 import {
     Boxes, ChartNoAxesCombined, ClipboardList, CreditCard, Grape, Inbox, LayoutDashboard,
     Receipt, ShieldCheck, Store, Tags, UserCog, Users, Wine
@@ -45,8 +44,13 @@ export const MENU = [
 ];
 
 // Grupo y nombre de la pagina actual (para la ruta de migas de la cabecera)
-export function tituloDe(pathname) {
-    const enlace = MENU.flatMap((g) => g.enlaces).find((e) => e.ruta !== '/' && pathname.startsWith(e.ruta));
-    const grupo = MENU.find((g) => g.enlaces.includes(enlace));
-    return enlace ? { grupo: grupo?.seccion, texto: enlace.texto } : null;
+export function tituloDe(rutaActual) {
+    for (const grupo of MENU) {
+        for (const enlace of grupo.enlaces) {
+            if (enlace.ruta !== '/' && rutaActual.startsWith(enlace.ruta)) {
+                return { grupo: grupo.seccion, texto: enlace.texto };
+            }
+        }
+    }
+    return null;
 }

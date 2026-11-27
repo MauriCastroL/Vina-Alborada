@@ -35,23 +35,26 @@ function lineasEtiqueta(nombre, maxLargo = 13, maxLineas = 3) {
     return lineas;
 }
 
-function Botella({ p, id }) {
-    const e = ESTILOS[tipoDeVino(p)];
-    const lineas = lineasEtiqueta(p.NOMBRE);
+function Botella(propiedades) {
+    const producto = propiedades.producto;
+    const id = propiedades.id;
+
+    const estilo = ESTILOS[tipoDeVino(producto)];
+    const lineas = lineasEtiqueta(producto.NOMBRE);
     const forma = 'M51 16 L51 92 C51 113 29 119 29 143 L29 279 Q29 291 41 291 L79 291 Q91 291 91 279 L91 143 C91 119 69 113 69 92 L69 16 Z';
     const yTexto = 212 - (lineas.length - 1) * 4.5;
     return (
-        <svg viewBox="0 0 120 300" className="h-full w-auto" role="img" aria-label={`Botella de ${p.NOMBRE}`}>
+        <svg viewBox="0 0 120 300" className="h-full w-auto" role="img" aria-label={`Botella de ${producto.NOMBRE}`}>
             <defs>
                 <linearGradient id={`${id}v`} x1="0" x2="1">
-                    <stop offset="0" stopColor={e.vidrio[1]} />
-                    <stop offset=".35" stopColor={e.vidrio[0]} />
-                    <stop offset="1" stopColor={e.vidrio[1]} />
+                    <stop offset="0" stopColor={estilo.vidrio[1]} />
+                    <stop offset=".35" stopColor={estilo.vidrio[0]} />
+                    <stop offset="1" stopColor={estilo.vidrio[1]} />
                 </linearGradient>
                 <linearGradient id={`${id}c`} x1="0" x2="1">
-                    <stop offset="0" stopColor={e.capsula[1]} />
-                    <stop offset=".4" stopColor={e.capsula[0]} />
-                    <stop offset="1" stopColor={e.capsula[1]} />
+                    <stop offset="0" stopColor={estilo.capsula[1]} />
+                    <stop offset=".4" stopColor={estilo.capsula[0]} />
+                    <stop offset="1" stopColor={estilo.capsula[1]} />
                 </linearGradient>
                 <linearGradient id={`${id}o`} x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0" stopColor="#f3dc9c" />
@@ -67,11 +70,11 @@ function Botella({ p, id }) {
                 <rect x="55" y="20" width="3" height="80" rx="1.5" fill="#fff" opacity=".18" />
                 <rect x="82" y="140" width="2" height="140" rx="1" fill="#fff" opacity=".08" />
                 <rect x="40" y="10" width="40" height="58" fill={`url(#${id}c)`} />
-                <rect x="40" y="62" width="40" height="2.2" fill={e.banda} opacity=".9" />
+                <rect x="40" y="62" width="40" height="2.2" fill={estilo.banda} opacity=".9" />
             </g>
             <rect x="49.5" y="100" width="21" height="10" rx="1" fill="#fbf6ec" stroke={`url(#${id}o)`} strokeWidth=".8" />
             <text x="60" y="107.3" textAnchor="middle" fontSize="5.2" fontFamily="'Cormorant Garamond', Georgia, serif"
-                fontWeight="700" fill="#65283b">{p.ANADA || 'NV'}</text>
+                fontWeight="700" fill="#65283b">{producto.ANADA || 'NV'}</text>
 
             <rect x="33" y="160" width="54" height="98" rx="2" fill="#fbf6ec" />
             <rect x="35.5" y="162.5" width="49" height="93" rx="1.2" fill="none" stroke={`url(#${id}o)`} strokeWidth=".9" />
@@ -79,35 +82,52 @@ function Botella({ p, id }) {
             <line x1="44" y1="197" x2="76" y2="197" stroke={`url(#${id}o)`} strokeWidth=".6" />
             <text textAnchor="middle" fontFamily="'Cormorant Garamond', Georgia, serif" fontWeight="700" fill="#65283b"
                 fontSize="7.4">
-                {lineas.map((l, i) => <tspan key={i} x="60" y={yTexto + i * 9}>{l}</tspan>)}
+                {lineas.map(function (linea, indice) {
+                    return <tspan key={indice} x="60" y={yTexto + indice * 9}>{linea}</tspan>;
+                })}
             </text>
             <text x="60" y="247" textAnchor="middle" fontSize="4" letterSpacing=".9" fill="#7a6a55"
                 fontFamily="system-ui, sans-serif">VIÑA ALBORADA</text>
             <text x="60" y="253" textAnchor="middle" fontSize="3.6" fill="#a58a5a"
-                fontFamily="system-ui, sans-serif">{p.FORMATO || '750 ml'}</text>
+                fontFamily="system-ui, sans-serif">{producto.FORMATO || '750 ml'}</text>
         </svg>
     );
 }
 
-function Racimo({ x, y, escala = 1, color }) {
+function Racimo(propiedades) {
+    const x = propiedades.x;
+    const y = propiedades.y;
+    let escala = propiedades.escala;
+    if (escala === undefined) {
+        escala = 1;
+    }
+    const color = propiedades.color;
+
     const granos = [[0, 0], [7, 0], [14, 0], [3.5, 6], [10.5, 6], [0, 12], [7, 12], [14, 12], [3.5, 18], [10.5, 18], [7, 24]];
     return (
         <g transform={`translate(${x} ${y}) scale(${escala})`}>
             <path d="M7 -6 C7 -10 9 -12 12 -13" stroke="#5b4a2a" strokeWidth="1.3" fill="none" strokeLinecap="round" />
             <path d="M8 -9 C12 -15 19 -14 21 -11 C17 -7 12 -7 8 -9 Z" fill="#5f7a3a" />
-            {granos.map(([gx, gy], i) => (
-                <circle key={i} cx={gx} cy={gy} r="4.4" fill={color} stroke="#2a0a14" strokeWidth=".4" strokeOpacity=".5" />
-            ))}
-            {granos.map(([gx, gy], i) => (
-                <circle key={`b${i}`} cx={gx - 1.3} cy={gy - 1.4} r="1.1" fill="#fff" opacity=".35" />
-            ))}
+            {granos.map(function ([gx, gy], indice) {
+                return (
+                    <circle key={indice} cx={gx} cy={gy} r="4.4" fill={color} stroke="#2a0a14" strokeWidth=".4" strokeOpacity=".5" />
+                );
+            })}
+            {granos.map(function ([gx, gy], indice) {
+                return (
+                    <circle key={`b${indice}`} cx={gx - 1.3} cy={gy - 1.4} r="1.1" fill="#fff" opacity=".35" />
+                );
+            })}
         </g>
     );
 }
 
-function CajaUva({ p, id }) {
+function CajaUva(propiedades) {
+    const producto = propiedades.producto;
+    const id = propiedades.id;
+
     return (
-        <svg viewBox="0 0 200 170" className="h-full w-auto" role="img" aria-label={`Caja de ${p.NOMBRE}`}>
+        <svg viewBox="0 0 200 170" className="h-full w-auto" role="img" aria-label={`Caja de ${producto.NOMBRE}`}>
             <defs>
                 <linearGradient id={`${id}m`} x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0" stopColor="#c99a62" />
@@ -138,11 +158,24 @@ function CajaUva({ p, id }) {
     );
 }
 
-export default function ImagenProducto({ p, className = '' }) {
+export default function ImagenProducto(propiedades) {
+    const producto = propiedades.producto;
+    let className = propiedades.className;
+    if (className === undefined) {
+        className = '';
+    }
+
     const id = `b${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
+    let ilustracion;
+    if (esPorKilo(producto.UNIDAD_MEDIDA)) {
+        ilustracion = <CajaUva producto={producto} id={id} />;
+    } else {
+        ilustracion = <Botella producto={producto} id={id} />;
+    }
+
     return (
         <div className={`flex items-end justify-center ${className}`}>
-            {esPorKilo(p.UNIDAD_MEDIDA) ? <CajaUva p={p} id={id} /> : <Botella p={p} id={id} />}
+            {ilustracion}
         </div>
     );
 }

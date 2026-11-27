@@ -1,15 +1,15 @@
 // Conexion a Oracle: la aplicacion solo invoca procedimientos (CEMJ_PA_*) y funciones (CEMJ_FN_*)
 const oracledb = require('oracledb');
-const config = require('./entorno');
+const configuracion = require('./entorno');
 
 oracledb.outFormat = oracledb.OUT_FORMAT_OBJECT;
 oracledb.autoCommit = true;
 
-let pool;
+let grupoConexiones;
 
 async function iniciarPool() {
-    pool = await oracledb.createPool({
-        ...config.db,
+    grupoConexiones = await oracledb.createPool({
+        ...configuracion.db,
         poolMin: 1,
         poolMax: 10,
         poolIncrement: 1
@@ -17,57 +17,75 @@ async function iniciarPool() {
 }
 
 async function cerrarPool() {
-    if (pool) {
-        await pool.close(5);
+    if (grupoConexiones) {
+        await grupoConexiones.close(5);
     }
 }
 
-const salidaNumero = () => ({ dir: oracledb.BIND_OUT, type: oracledb.NUMBER });
-const salidaTexto = (largo = 200) => ({ dir: oracledb.BIND_OUT, type: oracledb.STRING, maxSize: largo });
-const salidaCursor = () => ({ dir: oracledb.BIND_OUT, type: oracledb.CURSOR });
+function salidaNumero() {
+    return { dir: oracledb.BIND_OUT, type: oracledb.NUMBER };
+}
+function salidaTexto(largo = 200) {
+    return { dir: oracledb.BIND_OUT, type: oracledb.STRING, maxSize: largo };
+}
+function salidaCursor() {
+    return { dir: oracledb.BIND_OUT, type: oracledb.CURSOR };
+}
 
 function esSalida(valor) {
     return valor !== null && typeof valor === 'object' && valor.dir !== undefined;
 }
 
-function armarLlamada(params) {
-    const binds = {};
+function armarLlamada(parametros) {
+    const vinculos = {};
     const argumentos = [];
-    for (const [nombre, valor] of Object.entries(params)) {
+    for (const [nombre, valor] of Object.entries(parametros)) {
         argumentos.push(`${nombre} => :${nombre}`);
         if (esSalida(valor)) {
-            binds[nombre] = valor;
+            vinculos[nombre] = valor;
         } else {
-            binds[nombre] = { val: valor === undefined || valor === '' ? null : valor };
+            let valorParametro;
+            if (valor === undefined || valor === '') {
+                valorParametro = null;
+            } else {
+                valorParametro = valor;
+            }
+
+            vinculos[nombre] = { val: valorParametro };
         }
     }
-    return { binds, argumentos: argumentos.join(', ') };
+    return { binds: vinculos, argumentos: argumentos.join(', ') };
 }
 
 async function conConexion(usuario, trabajo) {
-    const conexion = await pool.getConnection();
+    const conexion = await grupoConexiones.getConnection();
     try {
-        conexion.clientId = usuario ? String(usuario.id) : '';
+        let identificadorCliente = '';
+        if (usuario) {
+            identificadorCliente = String(usuario.id);
+        }
+
+        conexion.clientId = identificadorCliente;
         return await trabajo(conexion);
     } finally {
         await conexion.close();
     }
 }
 
-async function ejecutar(procedimiento, params = {}, usuario = null) {
-    return conConexion(usuario, async (conexion) => {
-        const { binds, argumentos } = armarLlamada(params);
+async function ejecutar(procedimiento, parametros = {}, usuario = null) {
+    return conConexion(usuario, async function (conexion) {
+        const { binds: vinculos, argumentos } = armarLlamada(parametros);
         const resultado = await conexion.execute(
-            `BEGIN ${procedimiento}(${argumentos}); END;`, binds);
+            `BEGIN ${procedimiento}(${argumentos}); END;`, vinculos);
         return resultado.outBinds || {};
     });
 }
 
-async function listar(procedimiento, params = {}, usuario = null) {
-    return conConexion(usuario, async (conexion) => {
-        const { binds, argumentos } = armarLlamada({ P_CURSOR: salidaCursor(), ...params });
+async function listar(procedimiento, parametros = {}, usuario = null) {
+    return conConexion(usuario, async function (conexion) {
+        const { binds: vinculos, argumentos } = armarLlamada({ P_CURSOR: salidaCursor(), ...parametros });
         const resultado = await conexion.execute(
-            `BEGIN ${procedimiento}(${argumentos}); END;`, binds);
+            `BEGIN ${procedimiento}(${argumentos}); END;`, vinculos);
         const cursor = resultado.outBinds.P_CURSOR;
         try {
             return await cursor.getRows();
@@ -77,18 +95,20 @@ async function listar(procedimiento, params = {}, usuario = null) {
     });
 }
 
-async function funcion(nombre, params = {}, usuario = null) {
-    return conConexion(usuario, async (conexion) => {
-        const { binds, argumentos } = armarLlamada(params);
-        binds.RESULTADO = salidaNumero();
+async function funcion(nombre, parametros = {}, usuario = null) {
+    return conConexion(usuario, async function (conexion) {
+        const { binds: vinculos, argumentos } = armarLlamada(parametros);
+        vinculos.RESULTADO = salidaNumero();
         const resultado = await conexion.execute(
-            `BEGIN :RESULTADO := ${nombre}(${argumentos}); END;`, binds);
+            `BEGIN :RESULTADO := ${nombre}(${argumentos}); END;`, vinculos);
         return resultado.outBinds.RESULTADO;
     });
 }
 
 async function probarConexion() {
-    return conConexion(null, (conexion) => conexion.ping());
+    return conConexion(null, function (conexion) {
+        return conexion.ping();
+    });
 }
 
 module.exports = {

@@ -6,46 +6,54 @@ const validarFormatoProducto = require('../servicios/formatoProducto');
 const productos = require('../modelos/mantenedores/productos');
 const asincrono = require('../utilidades/asincrono');
 
-const listar = asincrono(async (req, res) => {
-    const { params, faltante } = servicio.parametrosListar(req.recurso, req.query);
+const listar = asincrono(async function (peticion, respuesta) {
+    const { params: parametros, faltante } = servicio.parametrosListar(peticion.recurso, peticion.query);
     if (faltante) {
-        return res.status(400).json({ error: `FALTA EL FILTRO ${faltante}` });
+        return respuesta.status(400).json({ error: `FALTA EL FILTRO ${faltante}` });
     }
-    const filas = await mantenedorModelo.listar(req.recurso, params, req.usuario);
-    res.json(filas);
+    const filas = await mantenedorModelo.listar(peticion.recurso, parametros, peticion.usuario);
+    respuesta.json(filas);
 });
 
-const crear = asincrono(async (req, res) => {
-    const recibido = req.body || {};
-    const cuerpo = req.recurso === productos ? await validarFormatoProducto(recibido, req.usuario) : recibido;
-    if (req.recurso === productos && (Object.hasOwn(cuerpo, 'CEPAS') || Number(cuerpo.ACTIVO) === 1)) {
-        return res.status(201).json(await crearProducto(cuerpo, req.usuario));
+const crear = asincrono(async function (peticion, respuesta) {
+    const recibido = peticion.body || {};
+    let cuerpo;
+    if (peticion.recurso === productos) {
+        cuerpo = await validarFormatoProducto(recibido, peticion.usuario);
+    } else {
+        cuerpo = recibido;
     }
-    await mantenedorModelo.crear(req.recurso, servicio.parametrosCrear(req.recurso, cuerpo, req.usuario), req.usuario);
-    res.status(201).json({ ok: true });
-});
-
-const modificar = asincrono(async (req, res) => {
-    const recibido = req.body || {};
-    const cuerpo = req.recurso === productos
-        ? await validarFormatoProducto(recibido, req.usuario, req.params.id)
-        : recibido;
-    const params = servicio.parametrosModificar(req.recurso, req.params.id, req.params.id2, cuerpo);
-    await mantenedorModelo.modificar(req.recurso, params, req.usuario);
-    res.json({ ok: true });
-});
-
-const eliminar = asincrono(async (req, res) => {
-    await mantenedorModelo.eliminar(req.recurso, servicio.parametrosIds(req.recurso, req.params.id, req.params.id2), req.usuario);
-    res.json({ ok: true });
-});
-
-const reactivar = asincrono(async (req, res) => {
-    if (!req.recurso.reactivar) {
-        return res.status(405).json({ error: 'ESTE REGISTRO NO SE PUEDE REACTIVAR' });
+    if (peticion.recurso === productos && (Object.hasOwn(cuerpo, 'CEPAS') || Number(cuerpo.ACTIVO) === 1)) {
+        return respuesta.status(201).json(await crearProducto(cuerpo, peticion.usuario));
     }
-    await mantenedorModelo.reactivar(req.recurso, servicio.parametrosIds(req.recurso, req.params.id, req.params.id2), req.usuario);
-    res.json({ ok: true });
+    await mantenedorModelo.crear(peticion.recurso, servicio.parametrosCrear(peticion.recurso, cuerpo, peticion.usuario), peticion.usuario);
+    respuesta.status(201).json({ ok: true });
+});
+
+const modificar = asincrono(async function (peticion, respuesta) {
+    const recibido = peticion.body || {};
+    let cuerpo;
+    if (peticion.recurso === productos) {
+        cuerpo = await validarFormatoProducto(recibido, peticion.usuario, peticion.params.id);
+    } else {
+        cuerpo = recibido;
+    }
+    const parametros = servicio.parametrosModificar(peticion.recurso, peticion.params.id, peticion.params.id2, cuerpo);
+    await mantenedorModelo.modificar(peticion.recurso, parametros, peticion.usuario);
+    respuesta.json({ ok: true });
+});
+
+const eliminar = asincrono(async function (peticion, respuesta) {
+    await mantenedorModelo.eliminar(peticion.recurso, servicio.parametrosIds(peticion.recurso, peticion.params.id, peticion.params.id2), peticion.usuario);
+    respuesta.json({ ok: true });
+});
+
+const reactivar = asincrono(async function (peticion, respuesta) {
+    if (!peticion.recurso.reactivar) {
+        return respuesta.status(405).json({ error: 'ESTE REGISTRO NO SE PUEDE REACTIVAR' });
+    }
+    await mantenedorModelo.reactivar(peticion.recurso, servicio.parametrosIds(peticion.recurso, peticion.params.id, peticion.params.id2), peticion.usuario);
+    respuesta.json({ ok: true });
 });
 
 module.exports = { listar, crear, modificar, eliminar, reactivar };

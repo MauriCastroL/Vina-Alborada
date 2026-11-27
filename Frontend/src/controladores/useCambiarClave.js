@@ -7,8 +7,8 @@ export function useCambiarClave(alCerrar) {
     const { avisar } = useMensajes();
     const [valores, setValores] = useState({});
 
-    async function guardar(e) {
-        e.preventDefault();
+    async function guardar(evento) {
+        evento.preventDefault();
         if (valores.claveNueva !== valores.repetir) {
             avisar('Las contraseñas nuevas no coinciden', 'error');
             return;
@@ -18,8 +18,8 @@ export function useCambiarClave(alCerrar) {
             avisar('Contraseña actualizada');
             setValores({});
             alCerrar();
-        } catch (err) {
-            avisar(err.message, 'error');
+        } catch (error) {
+            avisar(error.message, 'error');
         }
     }
 

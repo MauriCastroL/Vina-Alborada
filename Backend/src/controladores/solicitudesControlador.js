@@ -1,14 +1,14 @@
 const pagosWeb = require('../servicios/pagosWeb');
 const asincrono = require('../utilidades/asincrono');
 
-const aceptar = asincrono(async (req, res) => {
-    const idVenta = await pagosWeb.aceptar(req.params.id, req.usuario);
-    res.json({ ok: true, idVenta });
+const aceptar = asincrono(async function (peticion, respuesta) {
+    const idVenta = await pagosWeb.aceptar(peticion.params.id, peticion.usuario);
+    respuesta.json({ ok: true, idVenta });
 });
 
-const anular = asincrono(async (req, res) => {
-    await pagosWeb.anular(req.params.id, req.usuario, req.body?.MOTIVO);
-    res.json({ ok: true });
+const anular = asincrono(async function (peticion, respuesta) {
+    await pagosWeb.anular(peticion.params.id, peticion.usuario, peticion.body?.MOTIVO);
+    respuesta.json({ ok: true });
 });
 
 module.exports = { aceptar, anular };

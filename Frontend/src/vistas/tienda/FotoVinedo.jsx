@@ -1,5 +1,7 @@
 // Vista: foto del viñedo de la portada con degradados de legibilidad
-export default function FotoVinedo({ clase }) {
+export default function FotoVinedo(propiedades) {
+    const clase = propiedades.clase;
+
     return (
         <div aria-hidden="true" className={clase}>
             <img src="/img/vinedo-alborada.webp" alt="" className="h-full w-full animate-revelar-foto object-cover [animation-delay:60ms]" />

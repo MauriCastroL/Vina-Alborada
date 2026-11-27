@@ -4,11 +4,11 @@ const reportes = require('../controladores/reportesControlador');
 const autenticar = require('../middlewares/autenticacion');
 const permiso = require('../middlewares/permisos');
 
-const router = express.Router();
-router.use(autenticar, permiso('REPORTES'));
+const rutas = express.Router();
+rutas.use(autenticar, permiso('REPORTES'));
 
-router.get('/ranking-productos', reportes.rankingProductos);
-router.get('/ventas-canal', reportes.ventasPorCanal);
-router.get('/stock-critico', reportes.stockCritico);
+rutas.get('/ranking-productos', reportes.rankingProductos);
+rutas.get('/ventas-canal', reportes.ventasPorCanal);
+rutas.get('/stock-critico', reportes.stockCritico);
 
-module.exports = router;
+module.exports = rutas;

@@ -22,14 +22,35 @@ export function useInicio() {
 
     const mes = mesActual();
     const nombreMes = NOMBRE_MES.format(new Date(`${mes}-15T12:00:00`));
-    const delMes = ventas.filter((v) => (v.FECHA_CONFIRMACION || '').startsWith(mes));
-    const pendientes = solicitudes.filter((s) => s.ESTADO === 'PENDIENTE')
-        .sort((a, b) => String(b.FECHA_CREACION).localeCompare(String(a.FECHA_CREACION)));
-    const bajoMinimo = productos.filter((p) => Number(p.ACTIVO) === 1 && p.STOCK_ACTUAL < p.STOCK_MINIMO)
-        .sort((a, b) => (a.STOCK_ACTUAL - a.STOCK_MINIMO) - (b.STOCK_ACTUAL - b.STOCK_MINIMO));
+    const delMes = ventas.filter(function (venta) {
+        return (venta.FECHA_CONFIRMACION || '').startsWith(mes);
+    });
+    const pendientes = solicitudes.filter(function (solicitud) {
+        return solicitud.ESTADO === 'PENDIENTE';
+    });
+    pendientes.sort(function (primera, segunda) {
+        const fechaPrimera = String(primera.FECHA_CREACION);
+        const fechaSegunda = String(segunda.FECHA_CREACION);
+        return fechaSegunda.localeCompare(fechaPrimera);
+    });
+
+    const bajoMinimo = productos.filter(function (producto) {
+        const activo = Number(producto.ACTIVO) === 1;
+        return activo && producto.STOCK_ACTUAL < producto.STOCK_MINIMO;
+    });
+    bajoMinimo.sort(function (primero, segundo) {
+        const diferenciaPrimero = primero.STOCK_ACTUAL - primero.STOCK_MINIMO;
+        const diferenciaSegundo = segundo.STOCK_ACTUAL - segundo.STOCK_MINIMO;
+        return diferenciaPrimero - diferenciaSegundo;
+    });
+
+    let montoDelMes = 0;
+    for (const venta of delMes) {
+        montoDelMes += venta.TOTAL;
+    }
 
     return {
         usuario, tiene, esPersonal, veStock, alertas, pedidos, nombreMes,
-        ventasDelMes: delMes, montoDelMes: delMes.reduce((s, v) => s + v.TOTAL, 0), pendientes, bajoMinimo
+        ventasDelMes: delMes, montoDelMes, pendientes, bajoMinimo
     };
 }

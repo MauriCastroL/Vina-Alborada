@@ -5,19 +5,25 @@ export function useEncabezadoTienda() {
     const [solido, setSolido] = useState(false);
     const [abierto, setAbierto] = useState(false);
 
-    useEffect(() => {
-        const alDesplazar = () => setSolido(window.scrollY > 24);
+    useEffect(function () {
+        function alDesplazar() {
+            return setSolido(window.scrollY > 24);
+        }
         alDesplazar();
         window.addEventListener('scroll', alDesplazar, { passive: true });
-        return () => window.removeEventListener('scroll', alDesplazar);
+        return function () {
+            return window.removeEventListener('scroll', alDesplazar);
+        };
     }, []);
 
-    useEffect(() => {
+    useEffect(function () {
         if (!abierto) return undefined;
-        const tecla = (e) => e.key === 'Escape' && setAbierto(false);
+        function tecla(evento) {
+            return evento.key === 'Escape' && setAbierto(false);
+        }
         window.addEventListener('keydown', tecla);
         document.body.style.overflow = 'hidden';
-        return () => {
+        return function () {
             window.removeEventListener('keydown', tecla);
             document.body.style.overflow = '';
         };

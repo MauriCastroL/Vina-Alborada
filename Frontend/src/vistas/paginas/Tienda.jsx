@@ -11,7 +11,7 @@ import SeccionVinos from '../tienda/SeccionVinos.jsx';
 export default function Tienda() {
     const tienda = useTienda();
     const hayDestacados = tienda.destacados.length > 0;
-    const propsGrilla = {
+    const opcionesGrilla = {
         cantidades: tienda.cantidades,
         agregando: tienda.agregando,
         alComprar: tienda.quiereComprar,
@@ -27,8 +27,8 @@ export default function Tienda() {
             <main>
                 <Portada cantidad={tienda.productos.length} />
                 <SeccionDestacados destacados={tienda.destacados} agregando={tienda.agregando} alComprar={tienda.quiereComprar} />
-                <SeccionVinos tienda={tienda} propsGrilla={propsGrilla} />
-                <SeccionUva hayUva={tienda.hayUva} uvas={tienda.uvas} orden={tienda.orden} propsGrilla={propsGrilla} />
+                <SeccionVinos tienda={tienda} opcionesGrilla={opcionesGrilla} />
+                <SeccionUva hayUva={tienda.hayUva} uvas={tienda.uvas} orden={tienda.orden} opcionesGrilla={opcionesGrilla} />
             </main>
 
             <PieTienda hayDestacados={hayDestacados} hayUva={tienda.hayUva} />

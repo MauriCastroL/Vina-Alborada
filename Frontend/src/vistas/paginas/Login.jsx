@@ -10,12 +10,44 @@ import FormularioRegistro from '../acceso/FormularioRegistro.jsx';
 export default function Login() {
     const { sesion } = useSesion();
     const [parametros] = useSearchParams();
-    const [pestana, setPestana] = useState(parametros.get('modo') === 'registro' ? 'registro' : 'ingreso');
+    let pestanaInicial = 'ingreso';
+    if (parametros.get('modo') === 'registro') {
+        pestanaInicial = 'registro';
+    }
+
+    const [pestana, setPestana] = useState(pestanaInicial);
 
     if (sesion) return <Navigate to={destinoTrasEntrar(sesion.usuario, parametros.get('volver'))} replace />;
 
     const registro = pestana === 'registro';
-    const alEntrar = () => {};
+    function alEntrar() { }
+
+    let anchoFormulario = 'max-w-[420px]';
+    if (registro) {
+        anchoFormulario = 'max-w-[480px]';
+    }
+
+    let tituloFormulario = 'Inicia sesión';
+    if (registro) {
+        tituloFormulario = 'Crea tu cuenta';
+    }
+
+    let descripcionFormulario = 'Ingresa con tu correo y contraseña.';
+    if (registro) {
+        descripcionFormulario = 'Regístrate para hacer pedidos en la tienda en línea.';
+    }
+
+    let claseIndicador = '';
+    if (registro) {
+        claseIndicador = 'translate-x-full';
+    }
+
+    let formulario;
+    if (registro) {
+        formulario = <FormularioRegistro alEntrar={alEntrar} />;
+    } else {
+        formulario = <FormularioIngreso alEntrar={alEntrar} />;
+    }
 
     return (
         <div className="min-h-screen bg-marfil lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(520px,600px)]">
@@ -31,31 +63,35 @@ export default function Login() {
                 <Link to="/" className="inline-flex min-h-[44px] items-center gap-2 self-start text-sm font-medium no-underline hover:underline">
                     <ArrowLeft size={16} strokeWidth={1.75} aria-hidden="true" /> Volver a la tienda
                 </Link>
-                <div className={`mx-auto my-auto w-full py-10 ${registro ? 'max-w-[480px]' : 'max-w-[420px]'}`}>
+                <div className={`mx-auto my-auto w-full py-10 ${anchoFormulario}`}>
                     <img src="/img/logo-completo.png" alt="Viña Alborada, vinos y viñedos" className="w-44" />
                     <h1 className="mt-8 block font-marca text-[2.5rem] font-medium leading-tight">
-                        {registro ? 'Crea tu cuenta' : 'Inicia sesión'}
+                        {tituloFormulario}
                     </h1>
                     <p className="mt-2 text-[15px] text-suave">
-                        {registro ? 'Regístrate para hacer pedidos en la tienda en línea.' : 'Ingresa con tu correo y contraseña.'}
+                        {descripcionFormulario}
                     </p>
 
                     <div className="relative mb-6 mt-8 flex border-b border-borde" role="tablist" aria-label="Acceso">
-                        <span aria-hidden="true" className={`absolute -bottom-px left-0 h-0.5 w-1/2 bg-vino transition-transform duration-200 ease-salida ${registro ? 'translate-x-full' : ''}`} />
-                        {[['ingreso', 'Iniciar sesión'], ['registro', 'Crear cuenta']].map(([valor, texto]) => (
-                            <button key={valor} type="button" role="tab" aria-selected={pestana === valor}
-                                onClick={() => setPestana(valor)}
-                                className={`min-h-[44px] flex-1 text-sm font-medium transition-colors duration-150 ${pestana === valor
-                                    ? 'text-vino' : 'text-suave hover:text-tinta'}`}>
-                                {texto}
-                            </button>
-                        ))}
+                        <span aria-hidden="true" className={`absolute -bottom-px left-0 h-0.5 w-1/2 bg-vino transition-transform duration-200 ease-salida ${claseIndicador}`} />
+                        {[['ingreso', 'Iniciar sesión'], ['registro', 'Crear cuenta']].map(function ([valor, texto]) {
+                            let clasePestana = 'text-suave hover:text-tinta';
+                            if (pestana === valor) {
+                                clasePestana = 'text-vino';
+                            }
+
+                            return (
+                                <button key={valor} type="button" role="tab" aria-selected={pestana === valor}
+                                    onClick={() => setPestana(valor)}
+                                    className={`min-h-[44px] flex-1 text-sm font-medium transition-colors duration-150 ${clasePestana}`}>
+                                    {texto}
+                                </button>
+                            );
+                        })}
                     </div>
 
                     <div key={pestana} className="animate-aparecer">
-                        {registro
-                            ? <FormularioRegistro alEntrar={alEntrar} />
-                            : <FormularioIngreso alEntrar={alEntrar} />}
+                        {formulario}
                     </div>
                 </div>
             </main>

@@ -1,4 +1,3 @@
-// Vista: estructura del panel (menu lateral + cabecera + contenido de la ruta)
 import { Outlet } from 'react-router-dom';
 import { usePanel } from '../../controladores/usePanel.js';
 import CabeceraPanel from './CabeceraPanel.jsx';

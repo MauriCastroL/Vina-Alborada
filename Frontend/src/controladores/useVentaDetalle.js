@@ -7,20 +7,34 @@ import { useMensajes } from './MensajesContexto.jsx';
 
 export function useVentaDetalle(id) {
     const { avisar } = useMensajes();
+
     const { datos: ventas, cargando, recargar: recargarVentas } = useDatos(ventasModelo.RUTA_TODAS);
     const { datos: lineas, recargar: recargarLineas } = useDatos(ventasModelo.rutaDetalle(id));
     const { datos: productos, recargar: recargarProductos } = useDatos(RUTA_PRODUCTOS);
     const { datos: metodos } = useDatos(RUTA_METODOS_PAGO);
+
     const [agregar, setAgregar] = useState({ CANTIDAD: 1 });
     const [pago, setPago] = useState({});
     const [motivo, setMotivo] = useState('');
     const [confirmando, setConfirmando] = useState(false);
     const [confirmacion, setConfirmacion] = useState(null);
 
-    const venta = ventas.find((v) => String(v.ID_VENTA) === String(id));
-    const total = lineas.reduce((s, l) => s + l.SUBTOTAL, 0);
-    const activos = productos.filter((p) => Number(p.ACTIVO) === 1);
-    const recargarTodo = () => { recargarVentas(); recargarLineas(); recargarProductos(); };
+    const venta = ventas.find(function (filaVenta) {
+        return String(filaVenta.ID_VENTA) === String(id);
+    });
+    let total = 0;
+    for (const linea of lineas) {
+        total += linea.SUBTOTAL;
+    }
+    const activos = productos.filter(function (producto) {
+        return Number(producto.ACTIVO) === 1;
+    });
+
+    function recargarTodo() {
+        recargarVentas();
+        recargarLineas();
+        recargarProductos();
+    }
 
     async function ejecutar(operacion, mensaje) {
         try {
@@ -28,27 +42,36 @@ export function useVentaDetalle(id) {
             avisar(mensaje);
             recargarTodo();
             return true;
-        } catch (err) {
-            avisar(err.message, 'error');
+        } catch (error) {
+            avisar(error.message, 'error');
             return false;
         }
     }
 
-    async function agregarProducto(e) {
-        e.preventDefault();
+    async function agregarProducto(evento) {
+        evento.preventDefault();
         const { ID_PRODUCTO, CANTIDAD } = agregar;
-        if (!activos.some((p) => String(p.ID_PRODUCTO) === String(ID_PRODUCTO))) return;
-        if (await ejecutar(() => ventasModelo.agregarProducto(id, { ID_PRODUCTO, CANTIDAD }), 'Producto agregado')) {
+
+        if (!activos.some(function (producto) {
+            return String(producto.ID_PRODUCTO) === String(ID_PRODUCTO);
+        })) return;
+
+        if (await ejecutar(function () {
+            return ventasModelo.agregarProducto(id, { ID_PRODUCTO, CANTIDAD });
+        }, 'Producto agregado')) {
             setAgregar({ CANTIDAD: 1, BUSCAR_PRODUCTO: agregar.BUSCAR_PRODUCTO });
         }
     }
 
-    async function confirmar(e) {
-        e.preventDefault();
+    async function confirmar(evento) {
+        evento.preventDefault();
+
         if (confirmando) return;
+
         setConfirmando(true);
+
         try {
-            await ejecutar(async () => {
+            await ejecutar(async function () {
                 const resultado = await ventasModelo.confirmar(id, { ID_METODO_PAGO: pago.ID_METODO_PAGO });
                 setConfirmacion({ id, referencia: resultado?.REFERENCIA });
             }, 'Venta confirmada: stock descontado y pago registrado');
@@ -57,16 +80,24 @@ export function useVentaDetalle(id) {
         }
     }
 
-    function anular(e) {
-        e.preventDefault();
+    function anular(evento) {
+        evento.preventDefault();
+
         if (window.confirm('¿Anular la venta? Se devolverá el stock de sus productos.')) {
-            ejecutar(() => ventasModelo.anular(id, { MOTIVO: motivo }), 'Venta anulada: stock devuelto');
+            ejecutar(function () {
+                return ventasModelo.anular(id, { MOTIVO: motivo });
+            }, 'Venta anulada: stock devuelto');
         }
+    }
+
+    let referencia;
+    if (confirmacion?.id === id) {
+        referencia = confirmacion.referencia;
     }
 
     return {
         venta, cargando, lineas, total, activos, metodos, confirmando,
-        referencia: confirmacion?.id === id ? confirmacion.referencia : undefined,
+        referencia: referencia,
         agregar, setAgregar, pago, setPago, motivo, setMotivo, agregarProducto, confirmar, anular
     };
 }

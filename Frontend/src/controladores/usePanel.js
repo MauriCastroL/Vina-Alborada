@@ -15,11 +15,15 @@ export function usePanel() {
     const veAlertas = ['MONITOREO', 'INVENTARIO', 'REPORTES', 'VENTAS'].some(tiene);
     const { datos: alertas } = useDatos(RUTA_ALERTAS_PENDIENTES, { activo: veAlertas });
 
-    useEffect(() => {
+    useEffect(function () {
         if (!menuAbierto) return undefined;
-        const tecla = (e) => e.key === 'Escape' && setMenuAbierto(false);
+        function tecla(evento) {
+            return evento.key === 'Escape' && setMenuAbierto(false);
+        }
         window.addEventListener('keydown', tecla);
-        return () => window.removeEventListener('keydown', tecla);
+        return function () {
+            return window.removeEventListener('keydown', tecla);
+        };
     }, [menuAbierto]);
 
     function salir() {

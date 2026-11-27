@@ -4,12 +4,12 @@ const monitoreo = require('../controladores/monitoreoControlador');
 const autenticar = require('../middlewares/autenticacion');
 const permiso = require('../middlewares/permisos');
 
-const router = express.Router();
-router.use(autenticar);
+const rutas = express.Router();
+rutas.use(autenticar);
 
-router.get('/alertas-pendientes', permiso('MONITOREO', 'INVENTARIO', 'REPORTES', 'VENTAS'), monitoreo.alertasPendientes);
-router.get('/auditoria', permiso('MONITOREO'), monitoreo.auditoria);
-router.get('/alertas-stock', permiso('MONITOREO'), monitoreo.alertasStock);
-router.get('/logins', permiso('MONITOREO'), monitoreo.intentosLogin);
+rutas.get('/alertas-pendientes', permiso('MONITOREO', 'INVENTARIO', 'REPORTES', 'VENTAS'), monitoreo.alertasPendientes);
+rutas.get('/auditoria', permiso('MONITOREO'), monitoreo.auditoria);
+rutas.get('/alertas-stock', permiso('MONITOREO'), monitoreo.alertasStock);
+rutas.get('/logins', permiso('MONITOREO'), monitoreo.intentosLogin);
 
-module.exports = router;
+module.exports = rutas;

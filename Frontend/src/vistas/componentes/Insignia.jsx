@@ -1,4 +1,3 @@
-// Etiqueta de estado: texto y color semantico discreto (no depende solo del color)
 const TIPOS = {
     verde: ['CONFIRMADA', 'ACEPTADA', 'APLICADO', 'OK', 'DISPONIBLE', 'ACTIVO', 'SI', 'LOGIN_OK', 'STOCK_REPUESTO'],
     gris: ['BORRADOR', 'INACTIVO', 'INSERT', 'UPDATE'],
@@ -28,10 +27,15 @@ const TEXTOS = {
     STOCK_REPUESTO: 'Stock repuesto', CANCELADA: 'Cancelada'
 };
 
-export default function Insignia({ valor, texto }) {
+export default function Insignia(propiedades) {
+    const valor = propiedades.valor;
+    const texto = propiedades.texto;
+
     if (valor === null || valor === undefined || valor === '') return null;
     const clave = String(valor).toUpperCase();
-    const tipo = Object.keys(TIPOS).find((t) => TIPOS[t].includes(clave)) || 'gris';
+    const tipo = Object.keys(TIPOS).find(function (tipoDisponible) {
+        return TIPOS[tipoDisponible].includes(clave);
+    }) || 'gris';
     return (
         <span className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded px-2 py-0.5 align-middle text-xs font-medium ${COLORES[tipo]}`}>
             <span aria-hidden="true" className={`h-1.5 w-1.5 rounded-full ${PUNTOS[tipo]}`} />
@@ -40,6 +44,13 @@ export default function Insignia({ valor, texto }) {
     );
 }
 
-export function InsigniaActivo({ valor }) {
-    return <Insignia valor={Number(valor) === 1 ? 'ACTIVO' : 'INACTIVO'} />;
+export function InsigniaActivo(propiedades) {
+    const valor = propiedades.valor;
+
+    let estado = 'INACTIVO';
+    if (Number(valor) === 1) {
+        estado = 'ACTIVO';
+    }
+
+    return <Insignia valor={estado} />;
 }

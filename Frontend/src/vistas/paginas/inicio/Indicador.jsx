@@ -1,12 +1,22 @@
-// Vista: indicador del resumen (etiqueta, valor y detalle) que enlaza a su modulo
 import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-export default function Indicador({ a, etiqueta, valor, detalle, alerta }) {
+export default function Indicador(propiedades) {
+    const ruta = propiedades.ruta;
+    const etiqueta = propiedades.etiqueta;
+    const valor = propiedades.valor;
+    const detalle = propiedades.detalle;
+    const alerta = propiedades.alerta;
+
+    let claseAlerta = '';
+    if (alerta) {
+        claseAlerta = 'text-peligro';
+    }
+
     return (
-        <Link to={a} className="group flex flex-col gap-1 px-6 py-5 text-tinta no-underline transition-colors duration-150 hover:bg-stone-50">
+        <Link to={ruta} className="group flex flex-col gap-1 px-6 py-5 text-tinta no-underline transition-colors duration-150 hover:bg-stone-50">
             <span className="text-sm text-suave">{etiqueta}</span>
-            <strong className={`text-[2rem] font-semibold leading-tight tracking-[-0.02em] tabular-nums ${alerta ? 'text-peligro' : ''}`}>
+            <strong className={`text-[2rem] font-semibold leading-tight tracking-[-0.02em] tabular-nums ${claseAlerta}`}>
                 {valor}
             </strong>
             <span className="flex items-center gap-1.5 text-sm text-suave">

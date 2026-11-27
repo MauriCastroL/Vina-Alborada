@@ -3,13 +3,13 @@ const accesoModelo = require('../modelos/accesoModelo');
 const asincrono = require('../utilidades/asincrono');
 
 function permiso(...modulos) {
-    return asincrono(async (req, res, next) => {
+    return asincrono(async function (peticion, respuesta, continuar) {
         for (const modulo of modulos) {
-            if (await accesoModelo.puedeAcceder(req.usuario, modulo)) {
-                return next();
+            if (await accesoModelo.puedeAcceder(peticion.usuario, modulo)) {
+                return continuar();
             }
         }
-        res.status(403).json({ error: 'NO TIENE PERMISO PARA ESTE MODULO' });
+        respuesta.status(403).json({ error: 'NO TIENE PERMISO PARA ESTE MODULO' });
     });
 }
 

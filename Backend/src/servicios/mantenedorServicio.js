@@ -5,63 +5,76 @@ function prepararCuerpo(recurso, cuerpo, creando) {
     if (!recurso.claveAHash) {
         return cuerpo;
     }
-    const { CLAVE, ...resto } = cuerpo;
-    if (creando || CLAVE) {
-        validarClave(CLAVE);
+    const clave = cuerpo.CLAVE;
+    if (creando || clave) {
+        validarClave(clave);
     }
-    return { ...resto, PASSWORD_HASH: CLAVE ? hashClave(CLAVE) : null };
+    let claveCifrada = null;
+    if (clave) {
+        claveCifrada = hashClave(clave);
+    }
+
+    const preparado = { ...cuerpo };
+    delete preparado.CLAVE;
+    preparado.PASSWORD_HASH = claveCifrada;
+    return preparado;
 }
 
-function parametrosDesde(cuerpo, campos) {
-    const params = {};
+function agregarParametros(parametros, cuerpo, campos) {
     for (const campo of campos) {
-        params[`P_${campo}`] = cuerpo[campo];
+        parametros[`P_${campo}`] = cuerpo[campo];
     }
-    return params;
 }
 
 function parametrosIds(recurso, id, id2) {
     const valores = [id, id2];
-    const params = {};
-    recurso.ids.forEach((campo, i) => {
-        params[`P_${campo}`] = valores[i];
-    });
-    return params;
+    const parametros = {};
+    for (let indice = 0; indice < recurso.ids.length; indice++) {
+        const campo = recurso.ids[indice];
+        parametros[`P_${campo}`] = valores[indice];
+    }
+    return parametros;
 }
 
 // Devuelve { params } o { faltante } si falta un filtro obligatorio en la consulta
 function parametrosListar(recurso, consulta) {
-    const params = {};
+    const parametros = {};
     if (recurso.conInactivos) {
-        params.P_SOLO_ACTIVOS = consulta.todos === '1' ? 0 : 1;
+        let soloActivos = 1;
+        if (consulta.todos === '1') {
+            soloActivos = 0;
+        }
+
+        parametros.P_SOLO_ACTIVOS = soloActivos;
     }
     for (const [param, nombre] of Object.entries(recurso.filtros || {})) {
         if (consulta[nombre] === undefined) {
             return { faltante: nombre };
         }
-        params[param] = consulta[nombre];
+        parametros[param] = consulta[nombre];
     }
-    return { params };
+    return { params: parametros };
 }
 
 function parametrosCrear(recurso, cuerpoRecibido, usuario) {
     const cuerpo = prepararCuerpo(recurso, cuerpoRecibido, true);
-    const params = {
-        ...(recurso.ids.length > 1 ? parametrosDesde(cuerpo, recurso.ids) : {}),
-        ...parametrosDesde(cuerpo, recurso.campos),
-        ...parametrosDesde(cuerpo, recurso.soloAlCrear || [])
-    };
-    if (recurso.usuarioAlCrear) {
-        params[recurso.usuarioAlCrear] = usuario.id;
+    const parametros = {};
+    if (recurso.ids.length > 1) {
+        agregarParametros(parametros, cuerpo, recurso.ids);
     }
-    return params;
+    agregarParametros(parametros, cuerpo, recurso.campos);
+    agregarParametros(parametros, cuerpo, recurso.soloAlCrear || []);
+    if (recurso.usuarioAlCrear) {
+        parametros[recurso.usuarioAlCrear] = usuario.id;
+    }
+    return parametros;
 }
 
 function parametrosModificar(recurso, id, id2, cuerpoRecibido) {
-    return {
-        ...parametrosIds(recurso, id, id2),
-        ...parametrosDesde(prepararCuerpo(recurso, cuerpoRecibido, false), recurso.campos)
-    };
+    const parametros = parametrosIds(recurso, id, id2);
+    const cuerpo = prepararCuerpo(recurso, cuerpoRecibido, false);
+    agregarParametros(parametros, cuerpo, recurso.campos);
+    return parametros;
 }
 
 module.exports = { parametrosListar, parametrosCrear, parametrosModificar, parametrosIds };

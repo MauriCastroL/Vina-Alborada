@@ -12,6 +12,47 @@ export default function Ventas() {
     const navegar = useNavigate();
     const { ventas, filas, cargando, estado, setEstado, busqueda, setBusqueda } = useVentas();
 
+    let contenidoVentas;
+    if (cargando && ventas.length === 0) {
+        contenidoVentas = <Cargando />;
+    } else {
+        contenidoVentas = (
+            <Tabla
+                filas={filas} claveFila={(venta) => venta.ID_VENTA} alClickFila={(venta) => navegar(`/ventas/${venta.ID_VENTA}`)}
+                columnas={[
+                    { campo: 'ID_VENTA', titulo: 'N°' },
+                    {
+                        campo: 'FECHA', titulo: 'Fecha',
+                        render: function (venta) {
+                            return fechaHora(venta.FECHA_CONFIRMACION || venta.FECHA_CREACION);
+                        }
+                    },
+                    {
+                        campo: 'CANAL_VENTA', titulo: 'Canal', render: function (venta) {
+                            return <Insignia valor={venta.CANAL_VENTA} />;
+                        }
+                    },
+                    {
+                        campo: 'COMPRADOR', titulo: 'Comprador', render: function (venta) {
+                            return venta.COMPRADOR || 'Mostrador';
+                        }
+                    },
+                    {
+                        campo: 'TOTAL', titulo: 'Total', alinear: 'derecha', render: function (venta) {
+                            return dinero(venta.TOTAL);
+                        }
+                    },
+                    { campo: 'METODO_PAGO', titulo: 'Pago' },
+                    {
+                        campo: 'ESTADO', titulo: 'Estado', render: function (venta) {
+                            return <Insignia valor={venta.ESTADO} />;
+                        }
+                    }
+                ]}
+            />
+        );
+    }
+
     return (
         <section>
             <Cabecera titulo="Ventas" descripcion="Ventas presenciales y digitales (generadas desde solicitudes web).">
@@ -19,29 +60,15 @@ export default function Ventas() {
             </Cabecera>
             <div className="mb-3 flex flex-wrap items-center gap-3">
                 <input type="search" className="min-w-0 flex-1 sm:max-w-xs" placeholder="Buscar..." value={busqueda}
-                    onChange={(e) => setBusqueda(e.target.value)} aria-label="Buscar" />
-                <select value={estado} onChange={(e) => setEstado(e.target.value)} aria-label="Estado">
+                    onChange={(evento) => setBusqueda(evento.target.value)} aria-label="Buscar" />
+                <select value={estado} onChange={(evento) => setEstado(evento.target.value)} aria-label="Estado">
                     <option value="">Todos los estados</option>
                     <option value="BORRADOR">Borrador</option>
                     <option value="CONFIRMADA">Confirmada</option>
                     <option value="ANULADA">Anulada</option>
                 </select>
             </div>
-            {cargando && ventas.length === 0 ? <Cargando /> : (
-                <Tabla
-                    filas={filas} claveFila={(v) => v.ID_VENTA} alClickFila={(v) => navegar(`/ventas/${v.ID_VENTA}`)}
-                    columnas={[
-                        { campo: 'ID_VENTA', titulo: 'N°' },
-                        { campo: 'FECHA', titulo: 'Fecha',
-                            render: (v) => fechaHora(v.FECHA_CONFIRMACION || v.FECHA_CREACION) },
-                        { campo: 'CANAL_VENTA', titulo: 'Canal', render: (v) => <Insignia valor={v.CANAL_VENTA} /> },
-                        { campo: 'COMPRADOR', titulo: 'Comprador', render: (v) => v.COMPRADOR || 'Mostrador' },
-                        { campo: 'TOTAL', titulo: 'Total', alinear: 'derecha', render: (v) => dinero(v.TOTAL) },
-                        { campo: 'METODO_PAGO', titulo: 'Pago' },
-                        { campo: 'ESTADO', titulo: 'Estado', render: (v) => <Insignia valor={v.ESTADO} /> }
-                    ]}
-                />
-            )}
+            {contenidoVentas}
         </section>
     );
 }

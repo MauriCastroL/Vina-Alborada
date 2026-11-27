@@ -15,17 +15,24 @@ export default function CuentaTienda() {
             </>
         );
     }
+    let enlaceCuenta;
+    if (esCliente) {
+        enlaceCuenta = (
+            <Link to="/mis-pedidos" className="btn btn-contorno-claro">
+                <ClipboardList size={18} strokeWidth={1.75} aria-hidden="true" /> Mis pedidos
+            </Link>
+        );
+    } else {
+        enlaceCuenta = (
+            <Link to="/inicio" className="btn btn-contorno-claro">
+                <LayoutDashboard size={18} strokeWidth={1.75} aria-hidden="true" /> Ir al panel
+            </Link>
+        );
+    }
+
     return (
         <>
-            {esCliente ? (
-                <Link to="/mis-pedidos" className="btn btn-contorno-claro">
-                    <ClipboardList size={18} strokeWidth={1.75} aria-hidden="true" /> Mis pedidos
-                </Link>
-            ) : (
-                <Link to="/inicio" className="btn btn-contorno-claro">
-                    <LayoutDashboard size={18} strokeWidth={1.75} aria-hidden="true" /> Ir al panel
-                </Link>
-            )}
+            {enlaceCuenta}
             <button type="button" onClick={cerrar} aria-label="Cerrar sesión" title="Cerrar sesión"
                 className="grid h-10 w-10 place-items-center rounded-md text-inverso-suave transition-colors hover:bg-white/10 hover:text-inverso">
                 <LogOut size={18} strokeWidth={1.75} aria-hidden="true" />

@@ -4,14 +4,14 @@ const mantenedores = require('../controladores/mantenedoresControlador');
 const autenticar = require('../middlewares/autenticacion');
 const { cargarRecurso, lectura, escritura } = require('../middlewares/recursoMantenedor');
 
-const router = express.Router();
-router.use(autenticar);
-router.param('recurso', cargarRecurso);
+const rutas = express.Router();
+rutas.use(autenticar);
+rutas.param('recurso', cargarRecurso);
 
-router.get('/:recurso', lectura, mantenedores.listar);
-router.post('/:recurso', escritura, mantenedores.crear);
-router.put('/:recurso/:id{/:id2}', escritura, mantenedores.modificar);
-router.delete('/:recurso/:id{/:id2}', escritura, mantenedores.eliminar);
-router.patch('/:recurso/:id/reactivar', escritura, mantenedores.reactivar);
+rutas.get('/:recurso', lectura, mantenedores.listar);
+rutas.post('/:recurso', escritura, mantenedores.crear);
+rutas.put('/:recurso/:id{/:id2}', escritura, mantenedores.modificar);
+rutas.delete('/:recurso/:id{/:id2}', escritura, mantenedores.eliminar);
+rutas.patch('/:recurso/:id/reactivar', escritura, mantenedores.reactivar);
 
-module.exports = router;
+module.exports = rutas;

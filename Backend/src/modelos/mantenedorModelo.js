@@ -1,13 +1,28 @@
 // Modelo generico de los mantenedores (CRUD): ejecuta el procedimiento que define cada recurso
-const db = require('../config/baseDatos');
+const baseDatos = require('../config/baseDatos');
 const RECURSOS = require('./mantenedores');
 
-const obtenerRecurso = (nombre) => (Object.prototype.hasOwnProperty.call(RECURSOS, nombre) ? RECURSOS[nombre] : null);
+function obtenerRecurso(nombre) {
+    if (Object.prototype.hasOwnProperty.call(RECURSOS, nombre)) {
+        return RECURSOS[nombre];
+    }
+    return null;
+}
 
-const listar = (recurso, params, usuario) => db.listar(recurso.listar, params, usuario);
-const crear = (recurso, params, usuario) => db.ejecutar(recurso.crear, params, usuario);
-const modificar = (recurso, params, usuario) => db.ejecutar(recurso.modificar, params, usuario);
-const eliminar = (recurso, params, usuario) => db.ejecutar(recurso.eliminar, params, usuario);
-const reactivar = (recurso, params, usuario) => db.ejecutar(recurso.reactivar, params, usuario);
+function listar(recurso, parametros, usuario) {
+    return baseDatos.listar(recurso.listar, parametros, usuario);
+}
+function crear(recurso, parametros, usuario) {
+    return baseDatos.ejecutar(recurso.crear, parametros, usuario);
+}
+function modificar(recurso, parametros, usuario) {
+    return baseDatos.ejecutar(recurso.modificar, parametros, usuario);
+}
+function eliminar(recurso, parametros, usuario) {
+    return baseDatos.ejecutar(recurso.eliminar, parametros, usuario);
+}
+function reactivar(recurso, parametros, usuario) {
+    return baseDatos.ejecutar(recurso.reactivar, parametros, usuario);
+}
 
 module.exports = { obtenerRecurso, listar, crear, modificar, eliminar, reactivar };

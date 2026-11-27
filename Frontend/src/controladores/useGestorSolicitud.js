@@ -2,7 +2,10 @@ import { useState } from 'react';
 import * as solicitudesModelo from '../modelos/solicitudesModelo.js';
 import { useMensajes } from './MensajesContexto.jsx';
 
-export function useGestorSolicitud(solicitud, { alCambiar, alCerrar }) {
+export function useGestorSolicitud(solicitud, opciones) {
+    const alCambiar = opciones.alCambiar;
+    const alCerrar = opciones.alCerrar;
+
     const { avisar } = useMensajes();
     const [accionEnCurso, setAccionEnCurso] = useState(null);
 

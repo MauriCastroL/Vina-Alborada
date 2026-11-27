@@ -1,4 +1,3 @@
-// Contraseñas: hash con sal (scrypt) y verificacion; la BD solo guarda PASSWORD_HASH
 const crypto = require('crypto');
 const { errorApp } = require('../utilidades/errores');
 

@@ -1,5 +1,8 @@
-// Titulo de pagina con descripcion y acciones
-export default function Cabecera({ titulo, descripcion, children }) {
+export default function Cabecera(propiedades) {
+    const titulo = propiedades.titulo;
+    const descripcion = propiedades.descripcion;
+    const children = propiedades.children;
+
     return (
         <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
             <div className="min-w-0">

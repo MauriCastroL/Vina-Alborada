@@ -1,8 +1,8 @@
 // Sistema de Gestion Viña La Alborada
-// Ramo: Base de Datos - Seccion 2
+// Ramo: Base de Datos
 // Profesor: Carlos Castro
-// Integrantes: Mauricio Castro, Emerson Fuenzalida, José Cáceres, Cristóbal Villalobos
-// Punto de entrada: monta la aplicacion React con el enrutador y los estilos
+// Integrantes: Mauricio Castro Secc-3, Emerson Fuenzalida Secc-2, José Cáceres Secc-2, Cristóbal Villalobos Secc-2
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';

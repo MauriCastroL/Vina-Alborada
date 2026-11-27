@@ -13,21 +13,26 @@ const PESTANAS = [
 
 export default function Monitoreo() {
     const [pestana, setPestana] = useState('auditoria');
-    const Actual = PESTANAS.find((p) => p.id === pestana).componente;
+    const Actual = PESTANAS.find((opcion) => opcion.id === pestana).componente;
     return (
         <section>
             <Cabecera titulo="Monitoreo"
                 descripcion="Registro automático de los triggers de la base de datos: quién cambió qué y cuándo. Este registro no se puede modificar ni borrar." />
             <div className="mb-4 flex flex-wrap gap-1 border-b border-borde" role="tablist">
-                {PESTANAS.map((p) => (
-                    <button key={p.id} type="button" role="tab" aria-selected={pestana === p.id}
-                        onClick={() => setPestana(p.id)}
-                        className={`-mb-px border-b-2 px-4 py-2.5 text-sm transition-colors ${pestana === p.id
-                            ? 'border-vino font-semibold text-vino'
-                            : 'border-transparent text-suave hover:text-tinta'}`}>
-                        {p.texto}
-                    </button>
-                ))}
+                {PESTANAS.map(function (opcion) {
+                    let clasePestana = 'border-transparent text-suave hover:text-tinta';
+                    if (pestana === opcion.id) {
+                        clasePestana = 'border-vino font-semibold text-vino';
+                    }
+
+                    return (
+                        <button key={opcion.id} type="button" role="tab" aria-selected={pestana === opcion.id}
+                            onClick={() => setPestana(opcion.id)}
+                            className={`-mb-px border-b-2 px-4 py-2.5 text-sm transition-colors ${clasePestana}`}>
+                            {opcion.texto}
+                        </button>
+                    );
+                })}
             </div>
             <Actual />
         </section>

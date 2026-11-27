@@ -2,8 +2,22 @@
 import { consulta } from './http.js';
 
 export const RUTA_ALERTAS_PENDIENTES = '/monitoreo/alertas-pendientes';
-export const rutaAuditoria = (tabla, dias) => `/monitoreo/auditoria${consulta({ tabla, dias })}`;
-export const rutaAlertasStock = (soloBajoMinimo, dias) =>
-    `/monitoreo/alertas-stock${consulta({ soloBajoMinimo: soloBajoMinimo ? 1 : 0, dias })}`;
-export const rutaLogins = (soloFallidos, dias) =>
-    `/monitoreo/logins${consulta({ soloFallidos: soloFallidos ? 1 : 0, dias })}`;
+export function rutaAuditoria(tabla, dias) {
+    return `/monitoreo/auditoria${consulta({ tabla, dias })}`;
+}
+export function rutaAlertasStock(soloBajoMinimo, dias) {
+    let indicadorBajoMinimo = 0;
+    if (soloBajoMinimo) {
+        indicadorBajoMinimo = 1;
+    }
+
+    return `/monitoreo/alertas-stock${consulta({ soloBajoMinimo: indicadorBajoMinimo, dias })}`;
+}
+export function rutaLogins(soloFallidos, dias) {
+    let indicadorFallidos = 0;
+    if (soloFallidos) {
+        indicadorFallidos = 1;
+    }
+
+    return `/monitoreo/logins${consulta({ soloFallidos: indicadorFallidos, dias })}`;
+}

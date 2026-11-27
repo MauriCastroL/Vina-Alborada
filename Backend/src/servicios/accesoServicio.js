@@ -4,7 +4,9 @@ const { errorApp } = require('../utilidades/errores');
 const { validarClave, hashClave, verificarClave } = require('./claves');
 const { crearToken } = require('./tokens');
 
-const normalizarCorreo = (correo) => String(correo || '').trim().toUpperCase();
+function normalizarCorreo(correo) {
+    return String(correo || '').trim().toUpperCase();
+}
 
 async function iniciarSesion(correoIngresado, clave) {
     const correo = normalizarCorreo(correoIngresado);
@@ -36,20 +38,31 @@ async function iniciarSesion(correoIngresado, clave) {
     return { token: crearToken(usuario), usuario, modulos };
 }
 
-async function registrarCliente(d) {
-    validarClave(d.clave);
-    const esEmpresa = String(d.tipoCliente).toUpperCase() === 'EMPRESA';
-    await accesoModelo.registrarCliente({
-        tipoCliente: esEmpresa ? 'EMPRESA' : 'NATURAL',
-        rut: d.rut,
-        nombre: esEmpresa ? null : d.nombre,
-        apellido1: esEmpresa ? null : d.apellido1,
-        apellido2: esEmpresa ? null : d.apellido2,
-        razonSocial: esEmpresa ? d.razonSocial : null,
-        telefono: d.telefono,
-        correo: d.correo
-    }, hashClave(d.clave));
-    return iniciarSesion(d.correo, d.clave);
+async function registrarCliente(datosCliente) {
+    validarClave(datosCliente.clave);
+    const esEmpresa = String(datosCliente.tipoCliente).toUpperCase() === 'EMPRESA';
+    const registro = {
+        tipoCliente: 'NATURAL',
+        rut: datosCliente.rut,
+        nombre: null,
+        apellido1: null,
+        apellido2: null,
+        razonSocial: null,
+        telefono: datosCliente.telefono,
+        correo: datosCliente.correo
+    };
+
+    if (esEmpresa) {
+        registro.tipoCliente = 'EMPRESA';
+        registro.razonSocial = datosCliente.razonSocial;
+    } else {
+        registro.nombre = datosCliente.nombre;
+        registro.apellido1 = datosCliente.apellido1;
+        registro.apellido2 = datosCliente.apellido2;
+    }
+
+    await accesoModelo.registrarCliente(registro, hashClave(datosCliente.clave));
+    return iniciarSesion(datosCliente.correo, datosCliente.clave);
 }
 
 async function datosSesion(usuario) {

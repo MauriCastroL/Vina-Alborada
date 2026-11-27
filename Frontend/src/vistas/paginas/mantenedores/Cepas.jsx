@@ -10,7 +10,11 @@ export default function Cepas() {
             descripcion="Variedades de uva con que se elaboran los vinos."
             recurso="cepas" reactivable ids={['ID_CEPA']} conInactivos textoCrear="Nueva cepa"
             columnas={[
-                { campo: 'NOMBRE', titulo: 'Nombre', render: (f) => nombrePropio(f.NOMBRE) },
+                {
+                    campo: 'NOMBRE', titulo: 'Nombre', render: function (fila) {
+                        return nombrePropio(fila.NOMBRE);
+                    }
+                },
                 { campo: 'DESCRIPCION', titulo: 'Descripción' },
                 colActivo
             ]}

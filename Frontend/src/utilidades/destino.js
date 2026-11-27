@@ -1,6 +1,15 @@
-// A donde llevar al usuario despues de iniciar sesion (respeta ?volver= si es una ruta interna)
 export function destinoTrasEntrar(usuario, volver) {
-    const valido = volver && volver.startsWith('/') && !volver.startsWith('//') ? volver : null;
-    if (usuario?.rol === 'CLIENTE') return valido || '/';
-    return valido && valido !== '/' ? valido : '/inicio';
+    let rutaInterna = null;
+    if (volver && volver.startsWith('/') && !volver.startsWith('//')) {
+        rutaInterna = volver;
+    }
+
+    if (usuario?.rol === 'CLIENTE') {
+        return rutaInterna || '/';
+    }
+
+    if (rutaInterna && rutaInterna !== '/') {
+        return rutaInterna;
+    }
+    return '/inicio';
 }

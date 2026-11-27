@@ -3,27 +3,27 @@
 // Profesor: Carlos Castro
 // Integrantes: Mauricio Castro, Emerson Fuenzalida, José Cáceres, Cristóbal Villalobos
 // Punto de entrada: conecta con Oracle y levanta la aplicacion (src/app.js)
-const config = require('./config/entorno');
-const db = require('./config/baseDatos');
+const configuracion = require('./config/entorno');
+const baseDatos = require('./config/baseDatos');
 const app = require('./app');
 
 async function iniciar() {
     try {
-        await db.iniciarPool();
-        await db.probarConexion();
-        console.log(`Conectado a Oracle (${config.db.connectString}) como ${config.db.user}`);
-    } catch (err) {
+        await baseDatos.iniciarPool();
+        await baseDatos.probarConexion();
+        console.log(`Conectado a Oracle (${configuracion.db.connectString}) como ${configuracion.db.user}`);
+    } catch (error) {
         console.error('No se pudo conectar a Oracle. Revise Backend/.env y que el servicio este iniciado.');
-        console.error(err.message);
+        console.error(error.message);
         process.exit(1);
     }
-    app.listen(config.puerto, () => {
-        console.log(`Servidor listo en http://localhost:${config.puerto}`);
+    app.listen(configuracion.puerto, function () {
+        console.log(`Servidor listo en http://localhost:${configuracion.puerto}`);
     });
 }
 
-process.on('SIGINT', async () => {
-    await db.cerrarPool();
+process.on('SIGINT', async function () {
+    await baseDatos.cerrarPool();
     process.exit(0);
 });
 

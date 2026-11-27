@@ -12,17 +12,17 @@ export default function StockCritico() {
     const [dias, setDias] = useState(30);
     const [soloAlertas, setSoloAlertas] = useState(false);
     const { datos, error } = useDatos(rutaStockCritico(dias, soloAlertas));
-    const alertas = datos.filter((d) => d.ESTADO_STOCK !== 'OK');
+    const alertas = datos.filter((dato) => dato.ESTADO_STOCK !== 'OK');
 
     return (
         <Reporte titulo="Stock crítico y reposición"
             pregunta="¿Qué productos se van a agotar y cuánto hay que reponer según lo que se vende?"
             filtros={<>
-                <label className="filtro">Período <select value={dias} onChange={(e) => setDias(e.target.value)}>
+                <label className="filtro">Período <select value={dias} onChange={(evento) => setDias(evento.target.value)}>
                     <option value={7}>7 días</option><option value={30}>30 días</option><option value={90}>90 días</option>
                 </select></label>
                 <label className="casilla">
-                    <input type="checkbox" checked={soloAlertas} onChange={(e) => setSoloAlertas(e.target.checked)} />
+                    <input type="checkbox" checked={soloAlertas} onChange={(evento) => setSoloAlertas(evento.target.checked)} />
                     Solo alertas
                 </label>
             </>}>
@@ -30,7 +30,7 @@ export default function StockCritico() {
             <Cifras>
                 <Cifra etiqueta="Productos con alerta" valor={numero(alertas.length)} />
                 <Cifra etiqueta="Unidades sugeridas a reponer"
-                    valor={numero(datos.reduce((s, d) => s + d.SUGERIDO_REPONER, 0))} />
+                    valor={numero(datos.reduce((suma, dato) => suma + dato.SUGERIDO_REPONER, 0))} />
             </Cifras>
             {datos.length > 0 && (
                 <div className="mb-3 h-[280px] w-full">
@@ -40,24 +40,54 @@ export default function StockCritico() {
                             <XAxis dataKey="CODIGO" tick={{ ...EJE, fontSize: 11 }} angle={-30} textAnchor="end" interval={0} />
                             <YAxis tick={EJE} allowDecimals={false} />
                             <Tooltip cursor={CURSOR} {...TOOLTIP}
-                                formatter={(v, n) => [numero(v), n === 'STOCK_ACTUAL' ? 'Stock actual' : 'Stock mínimo']} />
-                            <Legend verticalAlign="top" formatter={(v) => (v === 'STOCK_ACTUAL' ? 'Stock actual' : 'Stock mínimo')} />
+                                formatter={function (cantidad, serie) {
+                                    let etiquetaSerie = 'Stock mínimo';
+                                    if (serie === 'STOCK_ACTUAL') {
+                                        etiquetaSerie = 'Stock actual';
+                                    }
+
+                                    return [numero(cantidad), etiquetaSerie];
+                                }} />
+                            <Legend verticalAlign="top" formatter={function (serie) {
+                                if (serie === 'STOCK_ACTUAL') {
+                                    return 'Stock actual';
+                                }
+                                return 'Stock mínimo';
+                            }} />
                             <Bar dataKey="STOCK_ACTUAL" fill={VINO} {...BARRA} />
                             <Bar dataKey="STOCK_MINIMO" fill={PIZARRA} {...BARRA} />
                         </BarChart>
                     </ResponsiveContainer>
                 </div>
             )}
-            <Tabla filas={datos} claveFila={(d) => d.CODIGO} porPagina={20} vacio="Sin productos con alerta" columnas={[
+            <Tabla filas={datos} claveFila={(dato) => dato.CODIGO} porPagina={20} vacio="Sin productos con alerta" columnas={[
                 { campo: 'PRODUCTO', titulo: 'Producto' },
                 { campo: 'STOCK_ACTUAL', titulo: 'Stock', alinear: 'derecha' },
                 { campo: 'STOCK_MINIMO', titulo: 'Mínimo', alinear: 'derecha' },
                 { campo: 'VENDIDAS_PERIODO', titulo: `Vendidas (${dias} d)`, alinear: 'derecha' },
-                { campo: 'DIAS_COBERTURA', titulo: 'Cobertura', alinear: 'derecha',
-                    render: (d) => (d.DIAS_COBERTURA != null ? `${d.DIAS_COBERTURA} días` : '—') },
-                { campo: 'ESTADO_STOCK', titulo: 'Estado', render: (d) => <Insignia valor={d.ESTADO_STOCK} /> },
-                { campo: 'SUGERIDO_REPONER', titulo: 'Reponer', alinear: 'derecha',
-                    render: (d) => (d.SUGERIDO_REPONER > 0 ? <strong>{d.SUGERIDO_REPONER}</strong> : 0) }
+                {
+                    campo: 'DIAS_COBERTURA', titulo: 'Cobertura', alinear: 'derecha',
+                    render: function (dato) {
+                        if (dato.DIAS_COBERTURA != null) {
+                            return `${dato.DIAS_COBERTURA} días`;
+                        }
+                        return '—';
+                    }
+                },
+                {
+                    campo: 'ESTADO_STOCK', titulo: 'Estado', render: function (dato) {
+                        return <Insignia valor={dato.ESTADO_STOCK} />;
+                    }
+                },
+                {
+                    campo: 'SUGERIDO_REPONER', titulo: 'Reponer', alinear: 'derecha',
+                    render: function (dato) {
+                        if (dato.SUGERIDO_REPONER > 0) {
+                            return <strong>{dato.SUGERIDO_REPONER}</strong>;
+                        }
+                        return 0;
+                    }
+                }
             ]} />
         </Reporte>
     );

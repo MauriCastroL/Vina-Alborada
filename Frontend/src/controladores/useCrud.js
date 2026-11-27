@@ -4,10 +4,33 @@ import * as mantenedoresModelo from '../modelos/mantenedoresModelo.js';
 import { normalizar } from '../utilidades/formato.js';
 import { useMensajes } from './MensajesContexto.jsx';
 
-export function useCrud({
-    recurso, ids, filtros = {}, conInactivos = false, textoEliminar = 'Desactivar',
-    prepararEnvio, transformarFilas, ordenDescendente = false, alCargar, recargar = 0
-}) {
+export function useCrud(opciones) {
+    const recurso = opciones.recurso;
+    const ids = opciones.ids;
+    let filtros = opciones.filtros;
+    if (filtros === undefined) {
+        filtros = {};
+    }
+    let conInactivos = opciones.conInactivos;
+    if (conInactivos === undefined) {
+        conInactivos = false;
+    }
+    let textoEliminar = opciones.textoEliminar;
+    if (textoEliminar === undefined) {
+        textoEliminar = 'Desactivar';
+    }
+    const prepararEnvio = opciones.prepararEnvio;
+    const transformarFilas = opciones.transformarFilas;
+    let ordenDescendente = opciones.ordenDescendente;
+    if (ordenDescendente === undefined) {
+        ordenDescendente = false;
+    }
+    const alCargar = opciones.alCargar;
+    let recargar = opciones.recargar;
+    if (recargar === undefined) {
+        recargar = 0;
+    }
+
     const { avisar } = useMensajes();
     const [filas, setFilas] = useState([]);
     const [cargando, setCargando] = useState(true);
@@ -16,39 +39,66 @@ export function useCrud({
     const [edicion, setEdicion] = useState(null);
     const [guardando, setGuardando] = useState(false);
 
-    const parametros = { ...filtros, todos: conInactivos && verTodos ? 1 : undefined };
+    let incluirTodos;
+    if (conInactivos && verTodos) {
+        incluirTodos = 1;
+    }
+
+    const parametros = { ...filtros, todos: incluirTodos };
     const ruta = mantenedoresModelo.rutaListar(recurso, parametros);
 
-    const cargar = useCallback(async () => {
+    const cargar = useCallback(async function () {
         setCargando(true);
         try {
             let datos = await mantenedoresModelo.listar(recurso, parametros);
             if (transformarFilas) datos = datos.map(transformarFilas);
             if (ordenDescendente) datos = [...datos].reverse();
             setFilas(datos);
-            alCargar?.(datos);
-        } catch (err) {
-            avisar(err.message, 'error');
+            if (alCargar != null) {
+                alCargar(datos);
+            }
+        } catch (error) {
+            avisar(error.message, 'error');
         } finally {
             setCargando(false);
         }
     }, [recurso, ruta]);
 
-    useEffect(() => { cargar(); }, [cargar, recargar]);
+    useEffect(function () { cargar(); }, [cargar, recargar]);
 
-    const visibles = useMemo(() => {
-        const q = normalizar(busqueda.trim());
-        if (!q) return filas;
-        return filas.filter((f) => Object.values(f).some((v) => normalizar(v).includes(q)));
+    const visibles = useMemo(function () {
+        const consulta = normalizar(busqueda.trim());
+        if (!consulta) return filas;
+        const coincidencias = [];
+        for (const fila of filas) {
+            for (const valor of Object.values(fila)) {
+                if (normalizar(valor).includes(consulta)) {
+                    coincidencias.push(fila);
+                    break;
+                }
+            }
+        }
+        return coincidencias;
     }, [filas, busqueda]);
 
-    const rutaIds = (fila) => ids.map((i) => encodeURIComponent(fila[i])).join('/');
+    function rutaIds(fila) {
+        const segmentos = [];
+        for (const campo of ids) {
+            segmentos.push(encodeURIComponent(fila[campo]));
+        }
+        return segmentos.join('/');
+    }
 
-    async function guardar(e) {
-        e.preventDefault();
+    async function guardar(evento) {
+        evento.preventDefault();
         setGuardando(true);
         try {
-            const cuerpo = prepararEnvio ? prepararEnvio({ ...edicion.valores }, edicion.modo) : edicion.valores;
+            let cuerpo;
+            if (prepararEnvio) {
+                cuerpo = prepararEnvio({ ...edicion.valores }, edicion.modo);
+            } else {
+                cuerpo = edicion.valores;
+            }
             if (edicion.modo === 'crear') {
                 const resultado = await mantenedoresModelo.crear(recurso, cuerpo);
                 if (resultado?.AVISO) avisar(resultado.AVISO, 'error');
@@ -62,8 +112,8 @@ export function useCrud({
             }
             setEdicion(null);
             cargar();
-        } catch (err) {
-            avisar(err.message, 'error');
+        } catch (error) {
+            avisar(error.message, 'error');
         } finally {
             setGuardando(false);
         }
@@ -75,8 +125,8 @@ export function useCrud({
             await mantenedoresModelo.eliminar(recurso, rutaIds(fila));
             avisar('Listo');
             cargar();
-        } catch (err) {
-            avisar(err.message, 'error');
+        } catch (error) {
+            avisar(error.message, 'error');
         }
     }
 
@@ -85,12 +135,14 @@ export function useCrud({
             await mantenedoresModelo.reactivar(recurso, rutaIds(fila));
             avisar('Registro reactivado');
             cargar();
-        } catch (err) {
-            avisar(err.message, 'error');
+        } catch (error) {
+            avisar(error.message, 'error');
         }
     }
 
-    const estaInactivo = (fila) => conInactivos && fila.ACTIVO !== undefined && Number(fila.ACTIVO) === 0;
+    function estaInactivo(fila) {
+        return conInactivos && fila.ACTIVO !== undefined && Number(fila.ACTIVO) === 0;
+    }
 
     return {
         filas, visibles, cargando, verTodos, setVerTodos, busqueda, setBusqueda,

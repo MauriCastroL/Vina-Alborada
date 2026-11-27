@@ -9,8 +9,8 @@ export function useIngreso(alEntrar) {
     const [error, setError] = useState('');
     const [enviando, setEnviando] = useState(false);
 
-    async function entrar(e) {
-        e.preventDefault();
+    async function entrar(evento) {
+        evento.preventDefault();
         setError('');
         setEnviando(true);
         try {

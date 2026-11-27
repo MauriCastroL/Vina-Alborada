@@ -14,25 +14,46 @@ export default function Auditoria() {
     const [tabla, setTabla] = useState('');
     const [dias, setDias] = useState(7);
     const { datos, cargando } = useDatos(rutaAuditoria(tabla, dias));
+    let contenidoAuditoria;
+    if (cargando && datos.length === 0) {
+        contenidoAuditoria = <Cargando />;
+    } else {
+        contenidoAuditoria = (
+            <Tabla filas={datos} claveFila={(fila) => fila.ID_AUDITORIA} vacio="Sin registros en el período" columnas={[
+                {
+                    campo: 'FECHA', titulo: 'Fecha', render: function (fila) {
+                        return fechaHora(fila.FECHA);
+                    }
+                },
+                {
+                    campo: 'USUARIO_APP', titulo: 'Usuario', render: function (fila) {
+                        return fila.USUARIO_APP?.toLowerCase();
+                    }
+                },
+                { campo: 'TABLA', titulo: 'Tabla' },
+                {
+                    campo: 'OPERACION', titulo: 'Operación', render: function (fila) {
+                        return <Insignia valor={fila.OPERACION} />;
+                    }
+                },
+                { campo: 'ID_REGISTRO', titulo: 'Registro' },
+                { campo: 'DETALLE', titulo: 'Detalle' }
+            ]} />
+        );
+    }
+
     return (
         <>
             <Barra>
-                <label className="filtro">Tabla <select value={tabla} onChange={(e) => setTabla(e.target.value)}>
+                <label className="filtro">Tabla <select value={tabla} onChange={(evento) => setTabla(evento.target.value)}>
                     <option value="">Todas</option>
-                    {TABLAS.map((t) => <option key={t} value={t}>{t}</option>)}
+                    {TABLAS.map(function (opcionTabla) {
+                        return <option key={opcionTabla} value={opcionTabla}>{opcionTabla}</option>;
+                    })}
                 </select></label>
                 <SelectorDias valor={dias} alCambiar={setDias} />
             </Barra>
-            {cargando && datos.length === 0 ? <Cargando /> : (
-                <Tabla filas={datos} claveFila={(f) => f.ID_AUDITORIA} vacio="Sin registros en el período" columnas={[
-                    { campo: 'FECHA', titulo: 'Fecha', render: (f) => fechaHora(f.FECHA) },
-                    { campo: 'USUARIO_APP', titulo: 'Usuario', render: (f) => f.USUARIO_APP?.toLowerCase() },
-                    { campo: 'TABLA', titulo: 'Tabla' },
-                    { campo: 'OPERACION', titulo: 'Operación', render: (f) => <Insignia valor={f.OPERACION} /> },
-                    { campo: 'ID_REGISTRO', titulo: 'Registro' },
-                    { campo: 'DETALLE', titulo: 'Detalle' }
-                ]} />
-            )}
+            {contenidoAuditoria}
         </>
     );
 }

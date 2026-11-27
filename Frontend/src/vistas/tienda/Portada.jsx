@@ -3,7 +3,9 @@ import { ArrowRight } from 'lucide-react';
 import { irASeccion } from '../../utilidades/navegacion.js';
 import FotoVinedo from './FotoVinedo.jsx';
 
-export default function Portada({ cantidad }) {
+export default function Portada(propiedades) {
+    const cantidad = propiedades.cantidad;
+
     return (
         <section id="inicio" className="tema-oscuro relative overflow-hidden bg-carbon text-inverso">
             <div className="relative mx-auto grid min-h-[620px] max-w-tienda items-center gap-10 px-4 pb-14 pt-[112px] sm:px-8

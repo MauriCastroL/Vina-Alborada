@@ -1,4 +1,3 @@
-// Aplicacion: proveedores (avisos y sesion), verificacion de edad y rutas
 import { ProveedorMensajes } from './controladores/MensajesContexto.jsx';
 import { ProveedorSesion } from './controladores/SesionContexto.jsx';
 import Rutas from './rutas/Rutas.jsx';

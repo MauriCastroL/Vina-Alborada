@@ -3,9 +3,21 @@ import { Link } from 'react-router-dom';
 import { useSesion } from '../../controladores/SesionContexto.jsx';
 import { irASeccion } from '../../utilidades/navegacion.js';
 
-export default function PieTienda({ hayDestacados, hayUva }) {
+export default function PieTienda(propiedades) {
+    const hayDestacados = propiedades.hayDestacados;
+    const hayUva = propiedades.hayUva;
+
     const { usuario } = useSesion();
     const claseEnlace = 'enlace-linea text-sm text-inverso-suave hover:text-inverso';
+    let enlaceCuenta;
+    if (usuario?.rol === 'CLIENTE') {
+        enlaceCuenta = <Link to="/mis-pedidos" className={claseEnlace}>Mis pedidos</Link>;
+    } else if (usuario) {
+        enlaceCuenta = <Link to="/inicio" className={claseEnlace}>Panel de gestión</Link>;
+    } else {
+        enlaceCuenta = <Link to="/login" className={claseEnlace}>Iniciar sesión</Link>;
+    }
+
     return (
         <footer className="tema-oscuro bg-carbon text-inverso">
             <div className="mx-auto grid max-w-tienda gap-10 px-4 py-14 sm:px-8 md:grid-cols-12 lg:px-14">
@@ -24,11 +36,7 @@ export default function PieTienda({ hayDestacados, hayUva }) {
                         {hayUva && <li><a href="#uva" onClick={irASeccion('uva')} className={claseEnlace}>Uva</a></li>}
                         {hayDestacados && <li><a href="#destacados" onClick={irASeccion('destacados')} className={claseEnlace}>Más vendidos</a></li>}
                         <li>
-                            {usuario?.rol === 'CLIENTE'
-                                ? <Link to="/mis-pedidos" className={claseEnlace}>Mis pedidos</Link>
-                                : usuario
-                                    ? <Link to="/inicio" className={claseEnlace}>Panel de gestión</Link>
-                                    : <Link to="/login" className={claseEnlace}>Iniciar sesión</Link>}
+                            {enlaceCuenta}
                         </li>
                     </ul>
                 </nav>
