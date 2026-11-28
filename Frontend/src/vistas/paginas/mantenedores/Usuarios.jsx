@@ -1,4 +1,3 @@
-// Pagina: mantenedor de usuarios (perfil, cliente asociado y contraseña cifrada en el servidor)
 import { useDatos } from '../../../controladores/useDatos.js';
 import { RUTA_CLIENTES, RUTA_ROLES } from '../../../modelos/mantenedoresModelo.js';
 import { fecha, nombreCliente, nombrePropio } from '../../../utilidades/formato.js';

@@ -1,4 +1,3 @@
-// Controlador de los 3 reportes: lee los filtros de la consulta y aplica sus valores por defecto
 const reporteModelo = require('../modelos/reporteModelo');
 const asincrono = require('../utilidades/asincrono');
 

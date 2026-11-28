@@ -1,4 +1,3 @@
-// Conexion a Oracle: la aplicacion solo invoca procedimientos (CEMJ_PA_*) y funciones (CEMJ_FN_*)
 const oracledb = require('oracledb');
 const configuracion = require('./entorno');
 

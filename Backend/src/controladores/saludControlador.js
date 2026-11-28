@@ -1,4 +1,3 @@
-// Controlador de salud: confirma que la API responde y que hay conexion con Oracle
 const baseDatos = require('../config/baseDatos');
 const asincrono = require('../utilidades/asincrono');
 

@@ -1,4 +1,3 @@
-// Controlador de la tienda: catalogo, destacados, busqueda, orden, cantidades y compra (con o sin sesion)
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RUTA_CATALOGO, RUTA_MAS_VENDIDOS } from '../modelos/catalogoModelo.js';

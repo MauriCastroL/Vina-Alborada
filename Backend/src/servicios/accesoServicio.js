@@ -1,4 +1,3 @@
-// Logica de acceso: inicio de sesion, registro de cliente web y cambio de contraseña
 const accesoModelo = require('../modelos/accesoModelo');
 const { errorApp } = require('../utilidades/errores');
 const { validarClave, hashClave, verificarClave } = require('./claves');

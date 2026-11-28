@@ -1,4 +1,3 @@
-// Vista: aviso para iniciar sesion o crear cuenta antes de agregar un producto al pedido
 import { cantidadConUnidad } from '../../utilidades/formato.js';
 import Modal from '../componentes/Modal.jsx';
 

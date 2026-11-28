@@ -1,4 +1,3 @@
-// Vistas compartidas del monitoreo: barra de filtros y selector de periodo
 export function Barra(propiedades) {
     const children = propiedades.children;
 

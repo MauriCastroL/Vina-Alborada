@@ -1,4 +1,3 @@
-// Mantenedor: Usuarios del sistema (CEMJ_USUARIO); la contraseña llega en texto y se guarda como hash
 module.exports = {
     modulo: 'USUARIOS',
     lectura: [

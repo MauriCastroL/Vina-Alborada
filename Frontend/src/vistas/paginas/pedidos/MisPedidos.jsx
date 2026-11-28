@@ -1,4 +1,3 @@
-// Pagina: pedidos del cliente web (pedido actual + historial)
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useDatos } from '../../../controladores/useDatos.js';

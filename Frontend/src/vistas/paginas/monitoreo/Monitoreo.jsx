@@ -1,4 +1,3 @@
-// Pagina: monitoreo (pestañas de auditoria, alertas de stock e intentos de inicio de sesion)
 import { useState } from 'react';
 import Cabecera from '../../componentes/Cabecera.jsx';
 import AlertasStock from './AlertasStock.jsx';

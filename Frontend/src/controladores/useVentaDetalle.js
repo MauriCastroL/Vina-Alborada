@@ -1,4 +1,3 @@
-// Controlador del detalle de venta: datos, productos, agregar, confirmar con pago (G4) y anular (G5)
 import { useState } from 'react';
 import { RUTA_METODOS_PAGO, RUTA_PRODUCTOS } from '../modelos/mantenedoresModelo.js';
 import * as ventasModelo from '../modelos/ventasModelo.js';

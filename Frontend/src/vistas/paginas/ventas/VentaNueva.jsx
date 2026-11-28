@@ -1,4 +1,3 @@
-// Pagina: nueva venta presencial (G2)
 import { useVentaNueva } from '../../../controladores/useVentaNueva.js';
 import { nombreCliente, normalizar } from '../../../utilidades/formato.js';
 import { quitarSeparadoresRut } from '../../../utilidades/rut.js';

@@ -1,4 +1,3 @@
-// Mantenedor: Cepas de uva (CEMJ_CEPA)
 module.exports = {
     modulo: 'PRODUCTOS',
     lectura: [

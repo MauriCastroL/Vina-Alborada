@@ -1,4 +1,3 @@
-// Modelo de los pedidos del cliente web (sus solicitudes de compra y productos)
 import { api } from './http.js';
 
 export const RUTA_MIS_PEDIDOS = '/cliente/mis-solicitudes';

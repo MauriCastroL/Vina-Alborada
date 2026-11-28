@@ -1,4 +1,3 @@
-// Rutas /api/mantenedores/:recurso: CRUD generico de los 10 mantenedores
 const express = require('express');
 const mantenedores = require('../controladores/mantenedoresControlador');
 const autenticar = require('../middlewares/autenticacion');

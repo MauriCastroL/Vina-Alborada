@@ -1,4 +1,3 @@
-// Vista: reporte de productos mas y menos vendidos del mes (CEMJ_PA_REP_RANKING_PRODUCTOS)
 import { useState } from 'react';
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useDatos } from '../../../controladores/useDatos.js';

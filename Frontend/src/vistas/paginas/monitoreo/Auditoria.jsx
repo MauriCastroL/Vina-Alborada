@@ -1,4 +1,3 @@
-// Vista: auditoria de cambios registrada por los triggers (filtro por tabla y periodo)
 import { useState } from 'react';
 import { useDatos } from '../../../controladores/useDatos.js';
 import { rutaAuditoria } from '../../../modelos/monitoreoModelo.js';

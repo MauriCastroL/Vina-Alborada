@@ -1,4 +1,3 @@
-// Exige un token de sesion valido y deja los datos del usuario en req.usuario
 const { verificarToken } = require('../servicios/tokens');
 
 function autenticar(peticion, respuesta, continuar) {

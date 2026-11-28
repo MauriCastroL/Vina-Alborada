@@ -1,4 +1,3 @@
-// Controlador del resumen del panel: ventas del mes, solicitudes pendientes, stock bajo y pedidos del cliente
 import { RUTA_MIS_PEDIDOS } from '../modelos/pedidosModelo.js';
 import { RUTA_PRODUCTOS, RUTA_SOLICITUDES } from '../modelos/mantenedoresModelo.js';
 import { RUTA_ALERTAS_PENDIENTES } from '../modelos/monitoreoModelo.js';

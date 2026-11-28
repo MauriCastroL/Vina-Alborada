@@ -1,4 +1,3 @@
-// Modelo de inventario: aplicar un movimiento actualiza el stock (gestor G1)
 const baseDatos = require('../config/baseDatos');
 
 function aplicarMovimiento(idMovimiento, usuario) {

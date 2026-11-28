@@ -1,4 +1,3 @@
-// Vista: grilla de tarjetas de producto (4/3/2/1 columnas segun el ancho)
 import TarjetaProducto from './TarjetaProducto.jsx';
 
 export default function GrillaProductos(propiedades) {

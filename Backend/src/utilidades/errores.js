@@ -1,4 +1,3 @@
-// Traduce los errores de Oracle a los estados y mensajes de la API.
 function errorApp(numero, mensaje) {
     const error = new Error(`ORA-${numero}: ${mensaje}`);
     error.errorNum = numero;
@@ -28,7 +27,6 @@ function buscarErrorInterno(linea) {
     let inicio = linea.indexOf('ORA-');
     while (inicio !== -1) {
         const codigo = leerCodigoOracle(linea, inicio);
-        // Un código interno debe estar seguido por un mensaje en la misma línea.
         if (codigo && !codigo.mensaje.includes('\r') &&
             !codigo.mensaje.includes('\u2028') && !codigo.mensaje.includes('\u2029')) {
             return { inicio, numero: codigo.numero, mensaje: codigo.mensaje };

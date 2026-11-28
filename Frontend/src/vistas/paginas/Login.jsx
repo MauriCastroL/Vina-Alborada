@@ -1,4 +1,3 @@
-// Pagina: inicio de sesion y registro de cliente web (foto a un lado, formulario al otro)
 import { ArrowLeft } from 'lucide-react';
 import { useState } from 'react';
 import { Link, Navigate, useSearchParams } from 'react-router-dom';

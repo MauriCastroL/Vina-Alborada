@@ -1,4 +1,3 @@
-// Configuracion leida desde Backend/.env (puerto, conexion a Oracle y sesiones JWT)
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '..', '..', '.env') });
 

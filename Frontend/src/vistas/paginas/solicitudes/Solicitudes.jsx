@@ -1,4 +1,3 @@
-// Consulta de solicitudes web de los clientes.
 import { useState } from 'react';
 import { dinero, fechaHora } from '../../../utilidades/formato.js';
 import CrudPagina from '../../componentes/CrudPagina.jsx';

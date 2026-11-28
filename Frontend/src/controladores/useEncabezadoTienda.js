@@ -1,4 +1,3 @@
-// Controlador de la cabecera de la tienda: fondo solido al desplazarse y menu movil (Escape lo cierra)
 import { useEffect, useState } from 'react';
 
 export function useEncabezadoTienda() {

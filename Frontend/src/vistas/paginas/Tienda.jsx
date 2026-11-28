@@ -1,4 +1,3 @@
-// Pagina: tienda publica (portada, mas vendidos, vinos, uva y compra); la logica vive en useTienda
 import { useTienda } from '../../controladores/useTienda.js';
 import EncabezadoTienda from '../tienda/EncabezadoTienda.jsx';
 import ModalIniciarSesion from '../tienda/ModalIniciarSesion.jsx';

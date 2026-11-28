@@ -1,4 +1,3 @@
-// Controlador del formulario de inicio de sesion
 import { useState } from 'react';
 import { useSesion } from './SesionContexto.jsx';
 

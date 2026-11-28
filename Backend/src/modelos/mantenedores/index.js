@@ -1,4 +1,3 @@
-// Definicion de los mantenedores: recurso de la URL -> procedimientos CRUD, campos y permisos
 module.exports = {
     'categorias': require('./categorias'),
     'cepas': require('./cepas'),

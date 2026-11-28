@@ -1,4 +1,3 @@
-// Tokens de sesion (JWT): creacion y verificacion
 const jwt = require('jsonwebtoken');
 const configuracion = require('../config/entorno');
 

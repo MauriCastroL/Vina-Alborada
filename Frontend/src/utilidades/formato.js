@@ -22,7 +22,6 @@ export function numero(valor) {
     return numeros.format(valor);
 }
 
-// Formatos de fecha
 
 export function fecha(valor) {
     if (!valor) {

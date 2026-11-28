@@ -1,4 +1,3 @@
-// Cliente HTTP de la API: agrega el token, interpreta errores y cierra la sesion si expiro
 import { borrarSesion, leerSesion } from './almacenSesion.js';
 
 export function consulta(parametros = {}) {

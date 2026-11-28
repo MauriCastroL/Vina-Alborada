@@ -1,4 +1,3 @@
-// Pagina: mantenedor de clientes (personas naturales y empresas)
 import { nombreCliente, nombrePropio } from '../../../utilidades/formato.js';
 import CrudPagina from '../../componentes/CrudPagina.jsx';
 import { colActivo } from './columnas.jsx';

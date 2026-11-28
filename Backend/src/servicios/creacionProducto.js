@@ -29,7 +29,6 @@ async function crearProducto(cuerpo, usuario) {
             throw errorApp(20105, 'INGRESE CEPAS DISTINTAS Y PORCENTAJES VALIDOS DE HASTA DOS DECIMALES');
         }
         ids.add(idCepa);
-        // Sumar centésimas evita comparar porcentajes con errores de redondeo.
         total += Math.round(porcentaje * 100);
     }
     if (total > 10000 || (activar && total !== 10000)) {
@@ -54,7 +53,6 @@ async function crearProducto(cuerpo, usuario) {
 
     await modelo.crear(productos, parametrosCrear(productos, { ...cuerpo, ACTIVO: 0 }, usuario), usuario);
 
-    // Los procedimientos existentes confirman cada paso por separado.
     let idProducto;
     try {
         idProducto = await baseDatos.funcion('CEMJ_FN_PRODUCTO_OBTENER_ID', { P_CODIGO: cuerpo.CODIGO }, usuario);

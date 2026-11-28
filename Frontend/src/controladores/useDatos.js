@@ -1,4 +1,3 @@
-// Controlador de lectura: carga datos de una ruta del modelo y expone cargando, error y recargar
 import { useCallback, useEffect, useState } from 'react';
 import { api } from '../modelos/http.js';
 

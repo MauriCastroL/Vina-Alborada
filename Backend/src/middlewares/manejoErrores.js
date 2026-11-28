@@ -1,4 +1,3 @@
-// Respuestas de error: ruta de la API inexistente y errores lanzados por los controladores
 const { traducirError } = require('../utilidades/errores');
 
 function rutaNoEncontrada(peticion, respuesta) {

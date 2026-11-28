@@ -1,4 +1,3 @@
-// Vista: seccion "Nuestros vinos" con la barra del catalogo y la grilla de vinos
 import { Link } from 'react-router-dom';
 import Cargando from '../componentes/Cargando.jsx';
 import BarraCatalogo from './BarraCatalogo.jsx';

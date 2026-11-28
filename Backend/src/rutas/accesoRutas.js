@@ -1,4 +1,3 @@
-// Rutas /api/acceso: login, registro, sesion y cambio de contraseña
 const express = require('express');
 const acceso = require('../controladores/accesoControlador');
 const autenticar = require('../middlewares/autenticacion');

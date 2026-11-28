@@ -1,4 +1,3 @@
-// Vista: seccion "Uva a granel" (solo si hay al menos una variedad activa)
 import GrillaProductos from './GrillaProductos.jsx';
 
 export default function SeccionUva(propiedades) {

@@ -1,4 +1,3 @@
-// Controlador de sesion: usuario, modulos permitidos, login, registro y cierre de sesion
 import { createContext, useContext, useEffect, useState } from 'react';
 import * as accesoModelo from '../modelos/accesoModelo.js';
 import { borrarSesion, guardarSesion, leerSesion } from '../modelos/almacenSesion.js';

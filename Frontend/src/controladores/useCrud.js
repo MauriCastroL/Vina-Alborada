@@ -1,4 +1,3 @@
-// Controlador generico de mantenedor: carga, busqueda, edicion, guardado, eliminacion logica y reactivacion
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import * as mantenedoresModelo from '../modelos/mantenedoresModelo.js';
 import { normalizar } from '../utilidades/formato.js';

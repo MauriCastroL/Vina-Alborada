@@ -1,4 +1,3 @@
-// Mantenedor: Productos: vinos y uva a granel (CEMJ_PRODUCTO)
 module.exports = {
     modulo: 'PRODUCTOS',
     lectura: [

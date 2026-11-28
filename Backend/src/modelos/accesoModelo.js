@@ -1,4 +1,3 @@
-// Modelo de acceso: datos de login, bitacora de intentos, modulos, registro de clientes y contraseñas
 const baseDatos = require('../config/baseDatos');
 
 const MODULOS = ['USUARIOS', 'CLIENTES', 'PRODUCTOS', 'METODOS_PAGO', 'INVENTARIO', 'VENTAS',

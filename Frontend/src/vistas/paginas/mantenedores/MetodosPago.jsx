@@ -1,4 +1,3 @@
-// Pagina: mantenedor de metodos de pago
 import CrudPagina from '../../componentes/CrudPagina.jsx';
 import { colActivo } from './columnas.jsx';
 

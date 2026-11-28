@@ -1,4 +1,3 @@
-// Modelo generico de mantenedores (CRUD): listar, crear, modificar, eliminar y reactivar
 import { api, consulta } from './http.js';
 
 function base(recurso) {
@@ -38,7 +37,6 @@ export function reactivar(recurso, rutaIds) {
 }
 
 
-// El servidor anterior solo acepta el alta inactiva y devuelve { ok: true }.
 async function crearYActivarProducto(cuerpo) {
     const total = cuerpo.CEPAS.reduce(function (suma, cepa) {
         return suma + Math.round(Number(cepa.PORCENTAJE) * 100);

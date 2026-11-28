@@ -43,7 +43,6 @@ export const MENU = [
     }
 ];
 
-// Grupo y nombre de la pagina actual (para la ruta de migas de la cabecera)
 export function tituloDe(rutaActual) {
     for (const grupo of MENU) {
         for (const enlace of grupo.enlaces) {

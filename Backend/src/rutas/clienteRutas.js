@@ -1,4 +1,3 @@
-// Rutas /api/cliente: catalogo publico y pedidos del cliente web (requieren sesion de cliente)
 const express = require('express');
 const catalogo = require('../controladores/catalogoControlador');
 const pedidos = require('../controladores/pedidosControlador');

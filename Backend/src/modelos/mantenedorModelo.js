@@ -1,4 +1,3 @@
-// Modelo generico de los mantenedores (CRUD): ejecuta el procedimiento que define cada recurso
 const baseDatos = require('../config/baseDatos');
 const RECURSOS = require('./mantenedores');
 

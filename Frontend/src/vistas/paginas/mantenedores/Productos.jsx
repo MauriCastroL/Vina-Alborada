@@ -1,4 +1,3 @@
-// Pagina: mantenedor de productos (vinos y uva a granel) con acceso a su composicion de cepas
 import { useState } from 'react';
 import { useMensajes } from '../../../controladores/MensajesContexto.jsx';
 import { useDatos } from '../../../controladores/useDatos.js';

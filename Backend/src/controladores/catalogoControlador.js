@@ -1,4 +1,3 @@
-// Controlador del catalogo publico de la tienda
 const catalogoModelo = require('../modelos/catalogoModelo');
 const asincrono = require('../utilidades/asincrono');
 

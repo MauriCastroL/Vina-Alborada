@@ -1,4 +1,3 @@
-// Vista: reporte de stock critico y reposicion sugerida (CEMJ_PA_REP_STOCK_CRITICO)
 import { useState } from 'react';
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useDatos } from '../../../controladores/useDatos.js';

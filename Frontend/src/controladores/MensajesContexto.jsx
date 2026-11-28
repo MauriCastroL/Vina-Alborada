@@ -1,4 +1,3 @@
-// Controlador de avisos: cola de mensajes de exito y error con cierre automatico
 import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { etiquetaValidacion, mensajeValidacion } from '../utilidades/validacionFormulario.js';
 import Avisos from '../vistas/componentes/Avisos.jsx';

@@ -1,4 +1,3 @@
-// Modelo de acceso: login, registro, datos de la sesion y cambio de contraseña
 import { api } from './http.js';
 
 export function iniciarSesion(correo, clave) {

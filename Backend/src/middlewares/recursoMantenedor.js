@@ -1,4 +1,3 @@
-// Mantenedores: carga la definicion del recurso de la URL y controla los permisos de lectura y escritura
 const mantenedorModelo = require('../modelos/mantenedorModelo');
 const permiso = require('./permisos');
 

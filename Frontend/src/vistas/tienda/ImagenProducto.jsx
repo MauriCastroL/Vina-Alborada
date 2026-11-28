@@ -1,4 +1,3 @@
-// Vista: imagen SVG de cada producto segun su tipo (botella tinto/blanco/rosado o caja de uva por kilo)
 import { useId } from 'react';
 import { esPorKilo } from '../../utilidades/formato.js';
 import { tipoDeVino } from '../../utilidades/productos.js';

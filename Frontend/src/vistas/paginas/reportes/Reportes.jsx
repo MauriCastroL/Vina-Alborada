@@ -1,4 +1,3 @@
-// Pagina: los 3 reportes calculados por la base de datos
 import Cabecera from '../../componentes/Cabecera.jsx';
 import RankingProductos from './RankingProductos.jsx';
 import StockCritico from './StockCritico.jsx';

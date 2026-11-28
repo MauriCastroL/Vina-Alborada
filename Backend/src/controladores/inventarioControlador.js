@@ -1,4 +1,3 @@
-// Controlador de inventario: aplicar un movimiento (gestor G1)
 const inventarioModelo = require('../modelos/inventarioModelo');
 const asincrono = require('../utilidades/asincrono');
 

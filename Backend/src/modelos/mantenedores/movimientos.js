@@ -1,4 +1,3 @@
-// Mantenedor: Movimientos de inventario (CEMJ_MOVIMIENTO_INVENTARIO)
 module.exports = {
     modulo: 'INVENTARIO',
     lectura: [

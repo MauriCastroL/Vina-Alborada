@@ -1,4 +1,3 @@
-// Mantenedor: Metodos de pago (CEMJ_METODO_PAGO)
 module.exports = {
     modulo: 'METODOS_PAGO',
     lectura: [

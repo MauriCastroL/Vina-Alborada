@@ -1,4 +1,3 @@
-// Modelo de los 3 reportes (CEMJ_PA_REP_*)
 const baseDatos = require('../config/baseDatos');
 
 function rankingProductos(anio, mes, usuario) {

@@ -1,4 +1,3 @@
-// Vista: entrega la aplicacion React compilada (Frontend/dist); cualquier ruta que no sea /api abre index.html
 const path = require('path');
 const fs = require('fs');
 const express = require('express');

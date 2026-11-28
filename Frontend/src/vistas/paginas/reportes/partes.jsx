@@ -1,4 +1,3 @@
-// Vistas y estilos compartidos por los reportes: colores de series, tarjeta, cifras, error y vacio
 export const VINO = '#65283b';
 export const PIZARRA = '#315c75';
 export const COBRE = '#78562f';

@@ -1,4 +1,3 @@
-// Mantenedor: Composicion de cepas de cada producto (CEMJ_PRODUCTO_CEPA)
 module.exports = {
     modulo: 'PRODUCTOS',
     lectura: [

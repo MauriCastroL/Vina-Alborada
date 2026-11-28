@@ -1,4 +1,3 @@
-// Tabla de rutas: tienda y login publicos; panel protegido por sesion y por modulo
 import { Navigate, Route, Routes } from 'react-router-dom';
 import PanelLayout from '../vistas/layouts/PanelLayout.jsx';
 import Inicio from '../vistas/paginas/inicio/Inicio.jsx';

@@ -1,4 +1,3 @@
-// Controlador generico de los 10 mantenedores: listar, crear, modificar, eliminar (logico) y reactivar
 const mantenedorModelo = require('../modelos/mantenedorModelo');
 const servicio = require('../servicios/mantenedorServicio');
 const crearProducto = require('../servicios/creacionProducto');

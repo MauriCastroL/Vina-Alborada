@@ -1,4 +1,3 @@
-// Cliente web: solo deja operar sobre solicitudes que pertenecen al cliente de la sesion
 const pedidoModelo = require('../modelos/pedidoModelo');
 const asincrono = require('../utilidades/asincrono');
 

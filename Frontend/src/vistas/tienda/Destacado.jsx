@@ -1,4 +1,3 @@
-// Vista: producto destacado (ranking 01/02/03) en la seccion oscura de los mas vendidos
 import { dinero, esPorKilo, nombrePropio } from '../../utilidades/formato.js';
 import ImagenProducto from './ImagenProducto.jsx';
 

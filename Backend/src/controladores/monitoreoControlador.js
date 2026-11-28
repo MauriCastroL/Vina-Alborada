@@ -1,4 +1,3 @@
-// Controlador de monitoreo: alertas pendientes, auditoria, alertas de stock e intentos de inicio de sesion
 const monitoreoModelo = require('../modelos/monitoreoModelo');
 const asincrono = require('../utilidades/asincrono');
 

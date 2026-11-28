@@ -1,4 +1,3 @@
-// Vista: reporte de ventas mensuales por canal, presencial y digital (CEMJ_PA_REP_VENTAS_CANAL)
 import { useMemo, useState } from 'react';
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { useDatos } from '../../../controladores/useDatos.js';

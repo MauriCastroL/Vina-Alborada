@@ -1,4 +1,3 @@
-// Controlador del cambio de contraseña del usuario de la sesion
 import { useState } from 'react';
 import * as accesoModelo from '../modelos/accesoModelo.js';
 import { useMensajes } from './MensajesContexto.jsx';

@@ -1,4 +1,3 @@
-// Sesion guardada en el navegador (localStorage): token, usuario y modulos
 const CLAVE_SESION = 'vina-alborada-sesion';
 
 export function leerSesion() {

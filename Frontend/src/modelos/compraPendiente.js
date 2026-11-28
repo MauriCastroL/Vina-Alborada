@@ -1,4 +1,3 @@
-// Producto que el visitante quiso comprar antes de iniciar sesion (sessionStorage)
 const CLAVE_PENDIENTE = 'vina-alborada-compra-pendiente';
 
 export function leerPendiente() {

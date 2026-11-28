@@ -1,4 +1,3 @@
-// Controlador de la venta presencial nueva (G2): comprador de mostrador o cliente registrado
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { RUTA_CLIENTES } from '../modelos/mantenedoresModelo.js';

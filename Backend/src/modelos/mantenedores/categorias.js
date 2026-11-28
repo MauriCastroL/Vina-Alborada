@@ -1,4 +1,3 @@
-// Mantenedor: Categorias de producto (CEMJ_CATEGORIA_PRODUCTO)
 module.exports = {
     modulo: 'PRODUCTOS',
     lectura: [

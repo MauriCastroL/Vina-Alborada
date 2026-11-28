@@ -1,4 +1,3 @@
-// Vista: tarjeta de producto del catalogo (imagen, datos, precio, disponibilidad, cantidad y agregar)
 import { cantidadConUnidad, dinero, esPorKilo, nombrePropio } from '../../utilidades/formato.js';
 import Cantidad from './Cantidad.jsx';
 import ImagenProducto from './ImagenProducto.jsx';

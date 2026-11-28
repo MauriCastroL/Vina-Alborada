@@ -1,4 +1,3 @@
-// Modelo del catalogo publico: productos a la venta y los mas vendidos
 const baseDatos = require('../config/baseDatos');
 
 function listar() {

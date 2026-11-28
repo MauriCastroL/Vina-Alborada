@@ -1,4 +1,3 @@
-// Vista: seccion "Los más vendidos" (ranking calculado por la base de datos)
 import Destacado from './Destacado.jsx';
 
 export default function SeccionDestacados(propiedades) {

@@ -1,4 +1,3 @@
-// Enrutador principal de la API (/api): une las rutas de cada modulo
 const express = require('express');
 const salud = require('../controladores/saludControlador');
 const { rutaNoEncontrada } = require('../middlewares/manejoErrores');

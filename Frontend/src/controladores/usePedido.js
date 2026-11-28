@@ -1,4 +1,3 @@
-// Controlador del pedido del cliente: cantidades, pagos por producto y envío.
 import { useRef, useState } from 'react';
 import * as pedidosModelo from '../modelos/pedidosModelo.js';
 import { useDatos } from './useDatos.js';

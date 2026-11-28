@@ -1,4 +1,3 @@
-// Vista: portada (hero) de la tienda con titular, llamado a explorar y foto del viñedo
 import { ArrowRight } from 'lucide-react';
 import { irASeccion } from '../../utilidades/navegacion.js';
 import FotoVinedo from './FotoVinedo.jsx';

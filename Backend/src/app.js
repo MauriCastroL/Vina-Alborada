@@ -1,4 +1,3 @@
-// Aplicacion Express: API en /api (rutas -> controladores -> modelos) y la vista web en /
 const express = require('express');
 const cors = require('cors');
 const rutasApi = require('./rutas');

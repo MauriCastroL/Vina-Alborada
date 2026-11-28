@@ -1,4 +1,3 @@
-// Vista: barra del catalogo con resumen, buscador y orden
 import { Search } from 'lucide-react';
 
 const ORDENES = {

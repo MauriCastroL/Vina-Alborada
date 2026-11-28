@@ -1,4 +1,3 @@
-// Modelo de los pedidos del cliente web (solicitudes de compra y sus productos)
 const baseDatos = require('../config/baseDatos');
 
 async function esDelCliente(idSolicitud, idCliente, usuario) {

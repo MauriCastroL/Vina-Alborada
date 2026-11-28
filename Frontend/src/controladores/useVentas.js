@@ -1,4 +1,3 @@
-// Controlador del listado de ventas: filtro por estado y busqueda (las mas nuevas primero)
 import { useMemo, useState } from 'react';
 import { rutaListar } from '../modelos/ventasModelo.js';
 import { normalizar } from '../utilidades/formato.js';

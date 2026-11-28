@@ -1,4 +1,3 @@
-// Vista: cabecera fija de la tienda con logo, secciones, cuenta y menu movil
 import { Menu, X } from 'lucide-react';
 import { useEncabezadoTienda } from '../../controladores/useEncabezadoTienda.js';
 import { irASeccion } from '../../utilidades/navegacion.js';

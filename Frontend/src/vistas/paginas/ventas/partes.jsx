@@ -1,4 +1,3 @@
-// Vistas compartidas de ventas: volver al listado, dato de la ficha y panel de accion
 import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 

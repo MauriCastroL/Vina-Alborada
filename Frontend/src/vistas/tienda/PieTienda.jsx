@@ -1,4 +1,3 @@
-// Vista: pie de la tienda con logo, aviso legal y enlaces
 import { Link } from 'react-router-dom';
 import { useSesion } from '../../controladores/SesionContexto.jsx';
 import { irASeccion } from '../../utilidades/navegacion.js';

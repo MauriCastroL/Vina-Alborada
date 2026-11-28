@@ -1,4 +1,3 @@
-// Controlador del registro de cliente web: datos, validaciones (RUT y contraseña) y envio
 import { useState } from 'react';
 import { formatearRut, rutValido } from '../utilidades/rut.js';
 import { useSesion } from './SesionContexto.jsx';

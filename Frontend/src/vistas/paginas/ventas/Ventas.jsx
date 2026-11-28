@@ -1,4 +1,3 @@
-// Pagina: listado de ventas presenciales y digitales
 import { Plus } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useVentas } from '../../../controladores/useVentas.js';

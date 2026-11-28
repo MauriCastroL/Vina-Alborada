@@ -1,4 +1,3 @@
-// Controlador de inventario: stock de productos activos y aplicacion de movimientos (G1)
 import { useState } from 'react';
 import * as inventarioModelo from '../modelos/inventarioModelo.js';
 import { rutaListar } from '../modelos/mantenedoresModelo.js';

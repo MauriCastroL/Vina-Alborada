@@ -1,4 +1,3 @@
-// Modelo de los 3 reportes (rutas de lectura con sus filtros)
 import { consulta } from './http.js';
 
 export function rutaRanking(anio, mes) {

@@ -1,4 +1,3 @@
-// Logica de los mantenedores: arma los parametros P_* de cada procedimiento segun la definicion del recurso
 const { validarClave, hashClave } = require('./claves');
 
 function prepararCuerpo(recurso, cuerpo, creando) {
@@ -36,7 +35,6 @@ function parametrosIds(recurso, id, id2) {
     return parametros;
 }
 
-// Devuelve { params } o { faltante } si falta un filtro obligatorio en la consulta
 function parametrosListar(recurso, consulta) {
     const parametros = {};
     if (recurso.conInactivos) {

@@ -1,4 +1,3 @@
-// Mantenedor: Roles o perfiles (CEMJ_ROL), solo lectura
 module.exports = {
     lectura: [
         'USUARIOS'

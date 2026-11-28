@@ -1,4 +1,3 @@
-// Vista: alertas de stock (bajo el minimo y repuestos) del periodo
 import { useState } from 'react';
 import { useDatos } from '../../../controladores/useDatos.js';
 import { rutaAlertasStock } from '../../../modelos/monitoreoModelo.js';

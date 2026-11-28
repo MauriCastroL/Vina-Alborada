@@ -1,4 +1,3 @@
-// Controlador de ventas: listado, detalle, venta presencial (G2), confirmar con pago (G4) y anular (G5)
 const { randomUUID } = require('node:crypto');
 const ventaModelo = require('../modelos/ventaModelo');
 const { errorApp } = require('../utilidades/errores');

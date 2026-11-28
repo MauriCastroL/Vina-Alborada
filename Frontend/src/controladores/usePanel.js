@@ -1,4 +1,3 @@
-// Controlador del panel: menu movil (Escape lo cierra), modal de contraseña, alertas de stock y salir
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { RUTA_ALERTAS_PENDIENTES } from '../modelos/monitoreoModelo.js';

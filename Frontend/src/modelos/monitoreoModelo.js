@@ -1,4 +1,3 @@
-// Modelo de monitoreo (rutas de lectura con sus filtros)
 import { consulta } from './http.js';
 
 export const RUTA_ALERTAS_PENDIENTES = '/monitoreo/alertas-pendientes';

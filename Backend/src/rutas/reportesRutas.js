@@ -1,4 +1,3 @@
-// Rutas /api/reportes: los 3 reportes (requieren el modulo REPORTES)
 const express = require('express');
 const reportes = require('../controladores/reportesControlador');
 const autenticar = require('../middlewares/autenticacion');

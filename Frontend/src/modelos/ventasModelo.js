@@ -1,4 +1,3 @@
-// Modelo de ventas: listado, detalle, venta presencial, agregar productos, confirmar y anular
 import { api, consulta } from './http.js';
 
 export function rutaListar(estado) {

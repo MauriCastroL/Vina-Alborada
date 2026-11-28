@@ -1,4 +1,3 @@
-// Pagina: detalle de una venta (productos, agregar, confirmar con pago y anular)
 import { Link, useParams } from 'react-router-dom';
 import { useVentaDetalle } from '../../../controladores/useVentaDetalle.js';
 import { dinero, fechaHora } from '../../../utilidades/formato.js';

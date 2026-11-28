@@ -1,8 +1,3 @@
-// Sistema de Gestion Viña La Alborada
-// Ramo: Base de Datos - Seccion 2
-// Profesor: Carlos Castro
-// Integrantes: Mauricio Castro, Emerson Fuenzalida, José Cáceres, Cristóbal Villalobos
-// Punto de entrada: conecta con Oracle y levanta la aplicacion (src/app.js)
 const configuracion = require('./config/entorno');
 const baseDatos = require('./config/baseDatos');
 const app = require('./app');

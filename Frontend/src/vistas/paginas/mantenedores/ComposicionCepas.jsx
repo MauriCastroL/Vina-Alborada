@@ -1,4 +1,3 @@
-// Vista: composicion de cepas de un producto (debe sumar 100% para activarlo)
 import { useState } from 'react';
 import { useDatos } from '../../../controladores/useDatos.js';
 import { RUTA_CEPAS } from '../../../modelos/mantenedoresModelo.js';

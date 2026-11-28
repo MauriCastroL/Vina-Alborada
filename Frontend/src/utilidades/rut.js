@@ -4,7 +4,6 @@ export function quitarSeparadoresRut(rut) {
     return rut.replace(/[.\s-]/g, '');
 }
 
-// RUT chileno: validación del dígito verificador y formato 12.345.678-9.
 export function rutValido(rut) {
     const limpio = quitarSeparadoresRut(rut).toUpperCase();
     if (!/^\d{7,8}[\dK]$/.test(limpio)) {

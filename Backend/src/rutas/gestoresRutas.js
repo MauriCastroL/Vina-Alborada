@@ -1,4 +1,3 @@
-// Rutas /api/gestores: los 5 gestores de informacion (CEMJ_PA_GES_*)
 const express = require('express');
 const inventario = require('../controladores/inventarioControlador');
 const ventas = require('../controladores/ventasControlador');

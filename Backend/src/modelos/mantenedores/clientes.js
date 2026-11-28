@@ -1,4 +1,3 @@
-// Mantenedor: Clientes personas y empresas (CEMJ_CLIENTE)
 module.exports = {
     modulo: 'CLIENTES',
     lectura: [

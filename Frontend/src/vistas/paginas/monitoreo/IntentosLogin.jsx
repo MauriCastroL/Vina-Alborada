@@ -1,4 +1,3 @@
-// Vista: intentos de inicio de sesion (exitosos y fallidos) del periodo
 import { useState } from 'react';
 import { useDatos } from '../../../controladores/useDatos.js';
 import { rutaLogins } from '../../../modelos/monitoreoModelo.js';

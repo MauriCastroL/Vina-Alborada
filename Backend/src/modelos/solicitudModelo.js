@@ -1,4 +1,3 @@
-// Modelo del gestor de solicitudes web (G3): envio y resolucion (aceptar genera una venta digital)
 const baseDatos = require('../config/baseDatos');
 
 function enviar(idSolicitud, usuario) {

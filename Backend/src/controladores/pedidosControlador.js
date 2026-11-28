@@ -1,4 +1,3 @@
-// Controlador de los pedidos del cliente web (sus solicitudes de compra)
 const pedidoModelo = require('../modelos/pedidoModelo');
 const pagosWeb = require('../servicios/pagosWeb');
 const asincrono = require('../utilidades/asincrono');

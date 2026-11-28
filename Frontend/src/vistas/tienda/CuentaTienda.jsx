@@ -1,4 +1,3 @@
-// Vista: acciones de cuenta en la cabecera de la tienda (ingresar, crear cuenta, mis pedidos o panel, salir)
 import { ClipboardList, LayoutDashboard, LogOut } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useSesion } from '../../controladores/SesionContexto.jsx';

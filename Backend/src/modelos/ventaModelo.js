@@ -1,4 +1,3 @@
-// Modelo de ventas: venta presencial (G2), confirmacion con pago (G4) y anulacion (G5)
 const baseDatos = require('../config/baseDatos');
 
 function listar(estado, usuario) {

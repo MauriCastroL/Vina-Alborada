@@ -1,4 +1,3 @@
-// Rutas /api/monitoreo: alertas, auditoria e intentos de inicio de sesion
 const express = require('express');
 const monitoreo = require('../controladores/monitoreoControlador');
 const autenticar = require('../middlewares/autenticacion');

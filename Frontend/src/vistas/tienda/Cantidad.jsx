@@ -1,4 +1,3 @@
-// Vista: selector de cantidad (− n +) en botellas o kilos
 import { Minus, Plus } from 'lucide-react';
 
 export default function Cantidad(propiedades) {

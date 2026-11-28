@@ -1,4 +1,3 @@
-// Controlador de acceso: login, registro de cliente web, datos de la sesion y cambio de contraseña
 const accesoServicio = require('../servicios/accesoServicio');
 const asincrono = require('../utilidades/asincrono');
 
