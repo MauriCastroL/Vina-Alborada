@@ -28,7 +28,7 @@ Conéctese con la cuenta `SYSTEM`. SQL*Plus le pedirá la contraseña elegida al
 sqlplus -L system@localhost:1521/FREEPDB1
 ```
 
-En la consola de SQL*Plus, cree un usuario exclusivo para la demo. Si otra persona administra Oracle, pídale que cree el usuario con estos permisos.
+En la consola de SQL*Plus, cree un usuario exclusivo para la demo.
 
 ```sql
 CREATE USER alborada IDENTIFIED BY AlboradaEsquema2026 DEFAULT TABLESPACE users QUOTA 100M ON users;
@@ -62,7 +62,7 @@ EXIT
 
 ### Configurar y arrancar la aplicación
 
-Cree un archivo de texto llamado `Backend/.env` con este contenido. Ajuste la conexión, el usuario y la contraseña si su instalación usa otros valores.
+En el archivo llamado `Backend/.env`. Ajuste la conexión, el usuario y la contraseña si su instalación usa otros valores.
 
 ```dotenv
 DB_USUARIO=alborada
