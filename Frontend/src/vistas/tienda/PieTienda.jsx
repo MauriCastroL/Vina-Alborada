@@ -39,9 +39,6 @@ export default function PieTienda(propiedades) {
                         </li>
                     </ul>
                 </nav>
-                <p className="text-sm text-inverso-suave md:col-span-4">
-                    Proyecto INF324 Base de Datos.
-                </p>
             </div>
         </footer>
     );

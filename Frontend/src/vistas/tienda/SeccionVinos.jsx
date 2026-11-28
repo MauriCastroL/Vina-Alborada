@@ -8,7 +8,7 @@ export default function SeccionVinos(propiedades) {
     const opcionesGrilla = propiedades.opcionesGrilla;
 
     const { esCliente, busqueda, setBusqueda, orden, setOrden, visibles, hayUva, error, cargando, productos, vinos } = tienda;
-    let textoCompra = 'Precios en pesos chilenos. Puedes ver todo el catálogo sin registrarte.';
+    let textoCompra = 'Puedes ver todo el catálogo sin registrarte.';
     if (esCliente) {
         textoCompra = <>Agrega productos a tu pedido y envíalo desde <Link to="/mis-pedidos">Mis pedidos</Link>.</>;
     }

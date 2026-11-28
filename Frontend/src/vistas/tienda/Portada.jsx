@@ -24,7 +24,7 @@ export default function Portada(propiedades) {
                                 className="transition-transform duration-200 ease-salida group-hover:translate-x-0.5" />
                         </a>
                         {cantidad > 0 && (
-                            <span className="text-sm text-inverso-suave">{cantidad} productos · precios en pesos chilenos</span>
+                            <span className="text-sm text-inverso-suave">{cantidad} productos</span>
                         )}
                     </div>
                 </div>
