@@ -1,0 +1,38 @@
+services:
+  app:
+    build: .
+    ports:
+      - "127.0.0.1:3001:3001"
+    environment:
+      DB_USUARIO: alborada
+      DB_CLAVE: AlboradaEsquema2026
+      DB_CONEXION: oracle:1521/FREEPDB1
+    depends_on:
+      oracle:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3001/api/salud').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  oracle:
+    image: gvenzl/oracle-free:23-slim-faststart
+    environment:
+      ORACLE_PASSWORD: AlboradaOracle2026
+      APP_USER: alborada
+      APP_USER_PASSWORD: AlboradaEsquema2026
+      NLS_LANG: AMERICAN_AMERICA.AL32UTF8
+    volumes:
+      - oracle-datos:/opt/oracle/oradata
+      - ./iniciar-oracle.sh:/container-entrypoint-initdb.d/01-alborada.sh:ro,Z
+      - ./DB/script.sql:/opt/alborada/script.sql:ro,Z
+    healthcheck:
+      test: ["CMD-SHELL", "test -f /opt/oracle/oradata/.alborada-inicializada && healthcheck.sh"]
+      interval: 5s
+      timeout: 5s
+      retries: 36
+      start_period: 60s
+
+volumes:
+  oracle-datos:
